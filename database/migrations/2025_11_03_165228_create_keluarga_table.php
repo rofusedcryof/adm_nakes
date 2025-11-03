@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('keluarga', function (Blueprint $table) {
             $table->id();
+
+            $table->string('nama');
+            $table->string('alamat');
+            $table->integer('no_telepon');
+            $table->string('hubungan');
+            $table->unsignedBigInteger('lansia_id');
+            $table->string('email');
+            
             $table->timestamps();
         });
     }
