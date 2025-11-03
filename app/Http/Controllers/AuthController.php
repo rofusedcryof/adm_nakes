@@ -19,42 +19,11 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-        // Database boongan: daftar user hard-coded
-        $fakeUsers = [
-            [
-                'id' => 1,
-                'name' => 'Admin',
-                'email' => 'admin@example.com',
-                'password' => 'password', // plain untuk demo
-                'role' => 'admin',
-            ],
-            [
-                'id' => 2,
-                'name' => 'Tenaga Medis',
-                'email' => 'user@example.com',
-                'password' => '123456',
-                'role' => 'tenaga_medis',
-            ],
-        ];
+        $remember = (bool) $request->boolean('remember');
 
-        $matched = null;
-        foreach ($fakeUsers as $u) {
-            if (strtolower($u['email']) === strtolower($credentials['email']) && $u['password'] === $credentials['password']) {
-                $matched = $u;
-                break;
-            }
-        }
-
-        if ($matched) {
-            // Simpan user ke sesi manual agar tidak tergantung provider database
-            $request->session()->put('auth_user', [
-                'id' => $matched['id'],
-                'name' => $matched['name'],
-                'email' => $matched['email'],
-                'role' => $matched['role'] ?? 'user',
-            ]);
+        if (\Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
-            $role = $matched['role'] ?? 'user';
+            $role = auth()->user()->role ?? 'user';
             $target = $role === 'admin' ? route('admin.dashboard') : ($role === 'tenaga_medis' ? route('medis.dashboard') : route('dashboard'));
             return redirect()->intended($target);
         }
@@ -66,8 +35,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        // Hapus sesi custom dan invalidasi
-        $request->session()->forget('auth_user');
+        \Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
