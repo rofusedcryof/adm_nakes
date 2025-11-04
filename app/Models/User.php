@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -44,5 +45,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function lansiaMedis()
+    {
+        return $this->belongsToMany(Lansia::class, 'medis_lansia', 'medis_user_id', 'lansia_id');
+    }
+
+    public function lansiaKeluarga()
+    {
+        return $this->belongsToMany(Lansia::class, 'keluarga_lansia', 'keluarga_user_id', 'lansia_id')->withPivot('hubungan');
     }
 }
