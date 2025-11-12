@@ -2,11 +2,18 @@
 
 namespace App\Models;
 
+<<<<<<< HEAD
+=======
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+>>>>>>> e14299cce1be7374f18d8414c9f80dd052c2adb4
 use Illuminate\Database\Eloquent\Model;
 
 class InstruksiObat extends Model
 {
+<<<<<<< HEAD
+    //
+}
+=======
     use HasFactory;
 
     protected $table = 'instruksi_obat';
@@ -32,3 +39,4 @@ class InstruksiObat extends Model
 }
 
 
+>>>>>>> e14299cce1be7374f18d8414c9f80dd052c2adb4
