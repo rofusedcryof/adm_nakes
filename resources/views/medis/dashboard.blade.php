@@ -34,7 +34,7 @@
     <div class="wrap">
         <aside class="sidebar">
             <a class="side-btn" href="{{ route('medis.riwayat') }}">Riwayat Kondisi Lansia</a>
-            <a class="side-btn" href="#">Instruksi Obat</a>
+            <a class="side-btn" href="{{ route('medis.instruksi.index') }}">Instruksi Obat</a>
         </aside>
         <main class="content">
             <img class="logo" src="https://dummyimage.com/800x600/e5f3f3/9fbcbc&text=HEALTHSYNC+\nELDERLY+MONITORING" alt="HEALTHSYNC">
