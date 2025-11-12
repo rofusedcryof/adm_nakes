@@ -17,9 +17,18 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            
+            // Tambahan kolom baru untuk sistem multi-login
+            $table->enum('role', ['nakes', 'lansia', 'pengasuh', 'admin'])->default('lansia');
+            
+            // Kolom opsional (kalau kamu mau menyimpan info tambahan)
+            $table->string('no_hp')->nullable();
+            $table->string('alamat')->nullable();
+        
             $table->rememberToken();
             $table->timestamps();
         });
+        
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();

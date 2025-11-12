@@ -2,29 +2,21 @@
 
 namespace App\Models;
 
-<<<<<<< HEAD
-=======
 use Illuminate\Database\Eloquent\Factories\HasFactory;
->>>>>>> e14299cce1be7374f18d8414c9f80dd052c2adb4
 use Illuminate\Database\Eloquent\Model;
 
-class InstruksiObat extends Model
+class JadwalKontrol extends Model
 {
-<<<<<<< HEAD
-    //
-}
-=======
     use HasFactory;
 
-    protected $table = 'instruksi_obat';
+    protected $table = 'jadwal_kegiatan';
 
     protected $fillable = [
-        'lansia_id', 'medis_user_id', 'nama_obat', 'dosis', 'frekuensi', 'mulai_pada', 'selesai_pada', 'status', 'catatan',
+        'lansia_id', 'medis_user_id', 'jadwal_pada', 'lokasi', 'status', 'catatan',
     ];
 
     protected $casts = [
-        'mulai_pada' => 'date',
-        'selesai_pada' => 'date',
+        'jadwal_pada' => 'datetime',
     ];
 
     public function lansia()
@@ -39,4 +31,3 @@ class InstruksiObat extends Model
 }
 
 
->>>>>>> e14299cce1be7374f18d8414c9f80dd052c2adb4

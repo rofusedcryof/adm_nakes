@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('pengasuh', function (Blueprint $table) {
             $table->id();
+
+            $table->string('nama');
+            $table->string('alamat');
+            $table->integer('no_telepon');
+            $table->string('email')->unique();
+            $table->string('password')->unique();
             $table->timestamps();
         });
     }

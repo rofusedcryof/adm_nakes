@@ -33,10 +33,9 @@
 
     <div class="wrap">
         <aside class="sidebar">
-            <a class="side-btn" href="#">Create Jadwal</a>
-            <a class="side-btn" href="#">Detele Jadwal</a>
-            <a class="side-btn" href="">Read Jadwal</a>
-            <a class="side-btn" href="">Update Jadwal</a>
+            <a class="side-btn" href="{{ route('admin.jadwal.index') }}">Jadwal Kegiatan</a>
+            <a class="side-btn" href="{{ route('admin.jadwal.create') }}">Tambah Jadwal</a>
+            <a class="side-btn" href="{{ route('admin.instruksi.index') }}">Instruksi Obat</a>
         </aside>
         <main class="content">
             <img class="logo" src="https://dummyimage.com/800x600/e5f3f3/9fbcbc&text=HEALTHSYNC+\nELDERLY+MONITORING" alt="HEALTHSYNC">
