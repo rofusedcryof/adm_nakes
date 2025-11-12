@@ -13,11 +13,13 @@ return new class extends Migration
     {
         Schema::create('jadwal_lansia', function (Blueprint $table) {
             $table->id();
-
-            $table->string('id_jadwal');
+            $table->foreignId('lansia_id')->constrained('lansia')->cascadeOnDelete();
+            $table->string('id_jadwal')->unique();
             $table->date('tanggal');
             $table->time('waktu');
-            $table->string('aktivotas');
+            $table->string('aktivitas');
+            $table->string('lokasi')->nullable();
+            $table->text('catatan')->nullable();
             $table->timestamps();
         });
     }

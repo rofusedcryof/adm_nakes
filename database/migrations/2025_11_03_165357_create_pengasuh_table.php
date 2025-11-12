@@ -16,9 +16,9 @@ return new class extends Migration
 
             $table->string('nama');
             $table->string('alamat');
-            $table->integer('no_telepon');
+            $table->string('no_telepon', 20);
             $table->string('email')->unique();
-            $table->string('password')->unique();
+            $table->string('password');
             $table->timestamps();
         });
     }

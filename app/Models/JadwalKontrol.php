@@ -9,7 +9,7 @@ class JadwalKontrol extends Model
 {
     use HasFactory;
 
-    protected $table = 'jadwal_kegiatan';
+    protected $table = 'jadwal_kontrol';
 
     protected $fillable = [
         'lansia_id', 'medis_user_id', 'jadwal_pada', 'lokasi', 'status', 'catatan',

@@ -24,7 +24,11 @@ class AuthController extends Controller
         if (\Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
             $role = auth()->user()->role ?? 'user';
-            $target = $role === 'admin' ? route('admin.dashboard') : ($role === 'tenaga_medis' ? route('medis.dashboard') : route('dashboard'));
+            $target = match($role) {
+                'admin' => route('admin.dashboard'),
+                'nakes' => route('medis.dashboard'),
+                default => route('dashboard')
+            };
             return redirect()->intended($target);
         }
 

@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('riwayat_kondisi_lansia', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('lansia_id')->constrained('lansia')->cascadeOnDelete();
+            $table->dateTime('diukur_pada');
+            $table->unsignedSmallInteger('sistol')->nullable();
+            $table->unsignedSmallInteger('diastol')->nullable();
+            $table->unsignedSmallInteger('nadi')->nullable();
+            $table->decimal('suhu', 4, 1)->nullable();
+            $table->unsignedSmallInteger('gula_darah')->nullable();
+            $table->text('catatan')->nullable();
             $table->timestamps();
         });
     }

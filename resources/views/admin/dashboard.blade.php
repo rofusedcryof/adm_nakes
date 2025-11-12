@@ -36,6 +36,8 @@
             <a class="side-btn" href="{{ route('admin.jadwal.index') }}">Jadwal Kegiatan</a>
             <a class="side-btn" href="{{ route('admin.jadwal.create') }}">Tambah Jadwal</a>
             <a class="side-btn" href="{{ route('admin.instruksi.index') }}">Instruksi Obat</a>
+            <a class="side-btn" href="{{ route('admin.keluarga.index') }}">Data Keluarga</a>
+            <a class="side-btn" href="{{ route('admin.pengasuh.index') }}">Data Pengasuh</a>
         </aside>
         <main class="content">
             <img class="logo" src="https://dummyimage.com/800x600/e5f3f3/9fbcbc&text=HEALTHSYNC+\nELDERLY+MONITORING" alt="HEALTHSYNC">

@@ -56,4 +56,29 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Lansia::class, 'keluarga_lansia', 'keluarga_user_id', 'lansia_id')->withPivot('hubungan');
     }
+
+    public function instruksiObat()
+    {
+        return $this->hasMany(InstruksiObat::class, 'medis_user_id');
+    }
+
+    public function jadwalKegiatan()
+    {
+        return $this->hasMany(JadwalKegiatan::class, 'medis_user_id');
+    }
+
+    public function notifikasi()
+    {
+        return $this->hasMany(Notifikasi::class);
+    }
+
+    public function admin()
+    {
+        return $this->hasOne(Admin::class);
+    }
+
+    public function nakes()
+    {
+        return $this->hasOne(Nakes::class);
+    }
 }

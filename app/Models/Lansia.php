@@ -32,4 +32,29 @@ class Lansia extends Model
     {
         return $this->belongsToMany(User::class, 'keluarga_lansia', 'lansia_id', 'keluarga_user_id')->withPivot('hubungan');
     }
+
+    public function instruksiObat()
+    {
+        return $this->hasMany(InstruksiObat::class);
+    }
+
+    public function riwayatKondisi()
+    {
+        return $this->hasMany(RiwayatKondisi::class);
+    }
+
+    public function jadwalKegiatan()
+    {
+        return $this->hasMany(JadwalKegiatan::class);
+    }
+
+    public function jadwalLansia()
+    {
+        return $this->hasMany(JadwalLansia::class);
+    }
+
+    public function riwayatKondisiLansia()
+    {
+        return $this->hasMany(RiwayatKondisiLansia::class);
+    }
 }
