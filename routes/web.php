@@ -5,6 +5,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminJadwalKegiatanController;
 use App\Http\Controllers\AdminInstruksiObatController;
 use App\Http\Controllers\MedisInstruksiObatController;
+use App\Http\Controllers\KeluargaController;
+use App\Http\Controllers\PengasuhController;
 
 Route::get('/', function () {
     return auth()->check()
@@ -55,9 +57,29 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/admin/instruksi/{instruksi}', [AdminInstruksiObatController::class, 'destroy'])->name('admin.instruksi.destroy');
 });
 
+// Admin - CRUD Keluarga
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/keluarga', [KeluargaController::class, 'index'])->name('admin.keluarga.index');
+    Route::get('/admin/keluarga/create', [KeluargaController::class, 'create'])->name('admin.keluarga.create');
+    Route::post('/admin/keluarga', [KeluargaController::class, 'store'])->name('admin.keluarga.store');
+    Route::get('/admin/keluarga/{keluarga}/edit', [KeluargaController::class, 'edit'])->name('admin.keluarga.edit');
+    Route::put('/admin/keluarga/{keluarga}', [KeluargaController::class, 'update'])->name('admin.keluarga.update');
+    Route::delete('/admin/keluarga/{keluarga}', [KeluargaController::class, 'destroy'])->name('admin.keluarga.destroy');
+});
+
+// Admin - CRUD Pengasuh
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/pengasuh', [PengasuhController::class, 'index'])->name('admin.pengasuh.index');
+    Route::get('/admin/pengasuh/create', [PengasuhController::class, 'create'])->name('admin.pengasuh.create');
+    Route::post('/admin/pengasuh', [PengasuhController::class, 'store'])->name('admin.pengasuh.store');
+    Route::get('/admin/pengasuh/{pengasuh}/edit', [PengasuhController::class, 'edit'])->name('admin.pengasuh.edit');
+    Route::put('/admin/pengasuh/{pengasuh}', [PengasuhController::class, 'update'])->name('admin.pengasuh.update');
+    Route::delete('/admin/pengasuh/{pengasuh}', [PengasuhController::class, 'destroy'])->name('admin.pengasuh.destroy');
+});
+
 // Tenaga medis dashboard
 Route::get('/medis', function () {
-    if ((auth()->user()->role ?? 'user') !== 'tenaga_medis') {
+    if ((auth()->user()->role ?? 'user') !== 'nakes') {
         return redirect()->route('dashboard');
     }
     return view('medis.dashboard');
@@ -65,7 +87,7 @@ Route::get('/medis', function () {
 
 // Medis - Riwayat Kondisi Lansia
 Route::get('/medis/riwayat', function () {
-    if ((auth()->user()->role ?? 'user') !== 'tenaga_medis') {
+    if ((auth()->user()->role ?? 'user') !== 'nakes') {
         return redirect()->route('dashboard');
     }
     $lansia = \App\Models\Lansia::select('id', 'nama_lansia', 'id_lansia')

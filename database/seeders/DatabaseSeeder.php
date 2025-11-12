@@ -7,7 +7,15 @@ use App\Models\Lansia;
 use App\Models\RiwayatKondisi;
 use App\Models\InstruksiObat;
 use App\Models\JadwalKegiatan;
+use App\Models\Admin;
+use App\Models\Nakes;
+use App\Models\Keluarga;
+use App\Models\Pengasuh;
+use App\Models\Notifikasi;
+use App\Models\JadwalLansia;
+use App\Models\RiwayatKondisiLansia;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -17,7 +25,8 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        User::updateOrCreate(
+        // Create Admin User
+        $adminUser = User::updateOrCreate(
             ['email' => 'admin@example.com'],
             [
                 'name' => 'Admin',
@@ -26,16 +35,18 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        User::updateOrCreate(
+        // Create Tenaga Medis User
+        $medis = User::updateOrCreate(
             ['email' => 'user@example.com'],
             [
                 'name' => 'Tenaga Medis',
                 'password' => Hash::make('123456'),
-                'role' => 'user',
+                'role' => 'nakes',
             ]
         );
 
-        $keluarga = User::updateOrCreate(
+        // Create Keluarga User
+        $keluargaUser = User::updateOrCreate(
             ['email' => 'keluarga@example.com'],
             [
                 'name' => 'Keluarga',
@@ -44,7 +55,28 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $medis = User::where('email', 'user@example.com')->first();
+        // Create Admin record
+        if ($adminUser) {
+            Admin::updateOrCreate(
+                ['user_id' => $adminUser->id],
+                [
+                    'nip' => 'ADM001',
+                    'jabatan' => 'Administrator Sistem',
+                ]
+            );
+        }
+
+        // Create Nakes record
+        if ($medis) {
+            Nakes::updateOrCreate(
+                ['user_id' => $medis->id],
+                [
+                    'nip' => 'NAKES001',
+                    'spesialisasi' => 'Dokter Umum',
+                    'no_sip' => 'SIP-2024-001',
+                ]
+            );
+        }
 
         $l1 = Lansia::updateOrCreate(
             ['id_lansia' => 'L-001'],
@@ -56,17 +88,40 @@ class DatabaseSeeder extends Seeder
         );
 
         if ($medis) {
-            \DB::table('medis_lansia')->updateOrInsert([
+            DB::table('medis_lansia')->updateOrInsert([
                 'medis_user_id' => $medis->id,
                 'lansia_id' => $l1->id,
             ], []);
         }
-        if ($keluarga) {
-            \DB::table('keluarga_lansia')->updateOrInsert([
-                'keluarga_user_id' => $keluarga->id,
+        if ($keluargaUser) {
+            DB::table('keluarga_lansia')->updateOrInsert([
+                'keluarga_user_id' => $keluargaUser->id,
                 'lansia_id' => $l1->id,
             ], ['hubungan' => 'anak']);
+
+            // Create Keluarga record
+            Keluarga::updateOrCreate(
+                ['email' => 'keluarga@example.com'],
+                [
+                    'nama' => 'Keluarga',
+                    'alamat' => 'Jl. Melati No. 10',
+                    'no_telepon' => '08123456789',
+                    'hubungan' => 'anak',
+                    'lansia_id' => $l1->id,
+                ]
+            );
         }
+
+        // Create Pengasuh
+        $pengasuh = Pengasuh::updateOrCreate(
+            ['email' => 'pengasuh@example.com'],
+            [
+                'nama' => 'Siti Nurhaliza',
+                'alamat' => 'Jl. Anggrek No. 5',
+                'no_telepon' => '08123456788',
+                'password' => '123456',
+            ]
+        );
 
         RiwayatKondisi::updateOrCreate([
             'lansia_id' => $l1->id,
@@ -81,7 +136,11 @@ class DatabaseSeeder extends Seeder
                 'medis_user_id' => $medis->id,
                 'nama_obat' => 'Amlodipine',
             ], [
-                'dosis' => '5mg', 'frekuensi' => '1x sehari', 'status' => 'aktif',
+                'dosis' => '5mg', 
+                'frekuensi' => '1x sehari', 
+                'status' => 'aktif',
+                'mulai_pada' => now()->subDays(7),
+                'selesai_pada' => now()->addDays(30),
             ]);
 
             JadwalKegiatan::updateOrCreate([
@@ -94,6 +153,55 @@ class DatabaseSeeder extends Seeder
                 'medis_user_id' => $medis->id,
                 'lokasi' => 'Puskesmas 1',
                 'jadwal_pada' => now()->addDays(7)->setTime(8,30,0),
+            ]);
+        }
+
+        // Create JadwalLansia
+        JadwalLansia::updateOrCreate(
+            ['id_jadwal' => 'JDL-' . date('Ymd') . '-001'],
+            [
+                'lansia_id' => $l1->id,
+                'tanggal' => now()->addDays(3),
+                'waktu' => '10:00:00',
+                'aktivitas' => 'Senam lansia',
+                'lokasi' => 'Posyandu',
+                'catatan' => 'Bawa botol minum',
+            ]
+        );
+
+        // Create RiwayatKondisiLansia
+        RiwayatKondisiLansia::updateOrCreate([
+            'lansia_id' => $l1->id,
+            'diukur_pada' => now()->subDays(2)->setTime(10,0,0),
+        ], [
+            'sistol' => 125,
+            'diastol' => 80,
+            'nadi' => 72,
+            'suhu' => 36.5,
+            'gula_darah' => 105,
+            'catatan' => 'Kondisi stabil',
+        ]);
+
+        // Create Notifikasi
+        if ($medis) {
+            Notifikasi::updateOrCreate([
+                'user_id' => $medis->id,
+                'tipe' => 'reminder',
+                'pesan' => 'Jadwal kontrol Ibu Sari dalam 7 hari',
+            ], [
+                'data_json' => ['lansia_id' => $l1->id, 'jadwal_id' => 'JDW-' . date('Ymd') . '-001'],
+                'read_at' => null,
+            ]);
+        }
+
+        if ($keluargaUser) {
+            Notifikasi::updateOrCreate([
+                'user_id' => $keluargaUser->id,
+                'tipe' => 'info',
+                'pesan' => 'Riwayat kondisi Ibu Sari telah diperbarui',
+            ], [
+                'data_json' => ['lansia_id' => $l1->id],
+                'read_at' => null,
             ]);
         }
     }
