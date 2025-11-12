@@ -15,12 +15,8 @@ class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // Admin default
         User::updateOrCreate(
             ['email' => 'admin@example.com'],
             [
@@ -30,17 +26,15 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Tenaga medis default
         User::updateOrCreate(
             ['email' => 'user@example.com'],
             [
                 'name' => 'Tenaga Medis',
                 'password' => Hash::make('123456'),
-                'role' => 'tenaga_medis',
+                'role' => 'user',
             ]
         );
 
-        // Keluarga (opsional)
         $keluarga = User::updateOrCreate(
             ['email' => 'keluarga@example.com'],
             [
@@ -52,7 +46,6 @@ class DatabaseSeeder extends Seeder
 
         $medis = User::where('email', 'user@example.com')->first();
 
-        // Lansia sample
         $l1 = Lansia::updateOrCreate(
             ['id_lansia' => 'L-001'],
             ['nama_lansia' => 'Ibu Sari', 'umur' => '1955-03-10', 'alamat' => 'Jl. Melati', 'jenis_kelamin' => 'P']
@@ -62,7 +55,6 @@ class DatabaseSeeder extends Seeder
             ['nama_lansia' => 'Bapak Joko', 'umur' => '1950-11-21', 'alamat' => 'Jl. Kenanga', 'jenis_kelamin' => 'L']
         );
 
-        // Pivot penugasan
         if ($medis) {
             \DB::table('medis_lansia')->updateOrInsert([
                 'medis_user_id' => $medis->id,
@@ -76,7 +68,6 @@ class DatabaseSeeder extends Seeder
             ], ['hubungan' => 'anak']);
         }
 
-        // Riwayat kondisi contoh
         RiwayatKondisi::updateOrCreate([
             'lansia_id' => $l1->id,
             'diukur_pada' => now()->subDays(1)->setTime(9,0,0),
@@ -84,7 +75,6 @@ class DatabaseSeeder extends Seeder
             'sistol' => 130, 'diastol' => 85, 'nadi' => 78, 'suhu' => 36.8, 'gula_darah' => 110,
         ]);
 
-        // Instruksi obat
         if ($medis) {
             InstruksiObat::updateOrCreate([
                 'lansia_id' => $l1->id,
@@ -94,7 +84,6 @@ class DatabaseSeeder extends Seeder
                 'dosis' => '5mg', 'frekuensi' => '1x sehari', 'status' => 'aktif',
             ]);
 
-            // Jadwal kegiatan (sesuai ERD)
             JadwalKegiatan::updateOrCreate([
                 'lansia_id' => $l1->id,
                 'id_jadwal' => 'JDW-' . date('Ymd') . '-001',
