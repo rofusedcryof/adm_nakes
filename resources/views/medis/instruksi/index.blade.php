@@ -12,7 +12,7 @@
         .nav a { color:#fff; text-decoration:none; font-weight:700; font-size:.9rem; }
         .wrap { display:flex; }
         .sidebar { width:220px; min-height: calc(100vh - 52px); background:#247e81; padding: .75rem; border-right: 2px solid #0f172a; }
-        .side-btn { display:block; width:100%; background:#fff; color:#111827; padding:.55rem .7rem; border-radius:18px; font-weight:800; margin:.7rem 0; text-align:left; border:2px solid #0f172a; box-shadow:0 2px 0 rgba(0,0,0,.2); }
+        .side-btn { display:block; width:100%; background:#fff; color:#111827; padding:.55rem .7rem; border-radius:18px; font-weight:800; margin:.7rem 0; text-align:left; border:2px solid #0f172a; box-shadow:0 2px 0 rgba(0,0,0,.2); box-sizing:border-box; }
         .side-btn.active { background:#e5f3f3; }
         .content { flex:1; padding:1.25rem; }
         table { width:100%; border-collapse:collapse; margin-top:1rem; background:#fff; border: 2px solid #d1d5db; border-radius:10px; overflow:hidden; }
