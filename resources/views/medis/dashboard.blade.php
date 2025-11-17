@@ -215,12 +215,103 @@
     </aside>
 
     <main class="content">
-      <div class="logo-bg">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
-      </div>
+      <div style="width: 100%; max-width: 1200px;">
+        <!-- Statistik Cards -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+          <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <div style="font-size: 0.9rem; color: #64748b; margin-bottom: 0.5rem;">Total Lansia</div>
+            <div style="font-size: 2rem; font-weight: 900; color: var(--primary);">{{ $totalLansia }}</div>
+          </div>
+          <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <div style="font-size: 0.9rem; color: #64748b; margin-bottom: 0.5rem;">Notifikasi</div>
+            <div style="font-size: 2rem; font-weight: 900; color: #ef4444;">{{ $totalNotifikasi }}</div>
+          </div>
+          <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <div style="font-size: 0.9rem; color: #64748b; margin-bottom: 0.5rem;">Instruksi Aktif</div>
+            <div style="font-size: 2rem; font-weight: 900; color: #10b981;">{{ $totalInstruksiAktif }}</div>
+          </div>
+        </div>
 
-      <div class="logo-container">
-        <img src="{{ asset('images/HEALTHSYNC.png') }}" alt="HEALTHSYNC Logo">
+        <!-- Notifikasi Darurat -->
+        @if($notifikasiDarurat->count() > 0)
+        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+          <h2 style="font-size: 1.5rem; font-weight: 900; margin-bottom: 1rem; color: var(--dark);">🚨 Notifikasi Darurat</h2>
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            @foreach($notifikasiDarurat as $notif)
+            <div style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 1rem; border-radius: 8px;">
+              <div style="font-weight: 700; color: #dc2626; margin-bottom: 0.5rem;">{{ $notif->pesan }}</div>
+              <div style="font-size: 0.85rem; color: #64748b;">{{ $notif->created_at->format('d/m/Y H:i') }}</div>
+            </div>
+            @endforeach
+          </div>
+        </div>
+        @endif
+
+        <!-- Kondisi Darurat -->
+        @if($kondisiDarurat->count() > 0)
+        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+          <h2 style="font-size: 1.5rem; font-weight: 900; margin-bottom: 1rem; color: var(--dark);">⚠️ Kondisi Darurat</h2>
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            @foreach($kondisiDarurat as $kondisi)
+            <div style="background: #fff7ed; border-left: 4px solid #f59e0b; padding: 1rem; border-radius: 8px;">
+              <div style="font-weight: 700; color: #d97706; margin-bottom: 0.5rem;">
+                {{ $kondisi->lansia->nama_lansia }} - {{ $kondisi->diukur_pada->format('d/m/Y H:i') }}
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 0.5rem; font-size: 0.9rem;">
+                @if($kondisi->sistol) <div>TD: {{ $kondisi->sistol }}/{{ $kondisi->diastol }}</div> @endif
+                @if($kondisi->nadi) <div>Nadi: {{ $kondisi->nadi }} bpm</div> @endif
+                @if($kondisi->suhu) <div>Suhu: {{ $kondisi->suhu }}°C</div> @endif
+                @if($kondisi->gula_darah) <div>Gula: {{ $kondisi->gula_darah }} mg/dL</div> @endif
+              </div>
+            </div>
+            @endforeach
+          </div>
+        </div>
+        @endif
+
+        <!-- Lansia yang Di-handle -->
+        @if($lansia->count() > 0)
+        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+          <h2 style="font-size: 1.5rem; font-weight: 900; margin-bottom: 1rem; color: var(--dark);">👥 Lansia yang Di-handle</h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+            @foreach($lansia as $l)
+            <div style="background: #f0fdf4; padding: 1rem; border-radius: 8px; border: 2px solid #86efac;">
+              <div style="font-weight: 700; color: var(--primary); margin-bottom: 0.25rem;">{{ $l->nama_lansia }}</div>
+              <div style="font-size: 0.85rem; color: #64748b;">ID: {{ $l->id_lansia }}</div>
+            </div>
+            @endforeach
+          </div>
+        </div>
+        @endif
+
+        <!-- Instruksi Obat Aktif -->
+        @if($instruksiAktif->count() > 0)
+        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          <h2 style="font-size: 1.5rem; font-weight: 900; margin-bottom: 1rem; color: var(--dark);">💊 Instruksi Obat Aktif</h2>
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            @foreach($instruksiAktif as $instruksi)
+            <div style="background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 1rem; border-radius: 8px;">
+              <div style="font-weight: 700; color: #0284c7; margin-bottom: 0.5rem;">
+                {{ $instruksi->lansia->nama_lansia }} - {{ $instruksi->nama_obat }}
+              </div>
+              <div style="font-size: 0.9rem; color: #64748b;">
+                Dosis: {{ $instruksi->dosis }} | Frekuensi: {{ $instruksi->frekuensi }}
+              </div>
+            </div>
+            @endforeach
+          </div>
+        </div>
+        @endif
+
+        <!-- Empty State -->
+        @if($lansia->count() == 0 && $notifikasiDarurat->count() == 0 && $kondisiDarurat->count() == 0)
+        <div style="text-align: center; padding: 3rem;">
+          <div class="logo-container">
+            <img src="{{ asset('images/HEALTHSYNC.png') }}" alt="HEALTHSYNC Logo">
+          </div>
+          <p style="color: #64748b; margin-top: 1rem;">Belum ada data untuk ditampilkan</p>
+        </div>
+        @endif
       </div>
     </main>
   </div>

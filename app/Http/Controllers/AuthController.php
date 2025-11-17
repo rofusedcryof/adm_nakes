@@ -38,7 +38,8 @@ class AuthController extends Controller
 
             $redirectTo = match ($role) {
                 'admin' => route('admin.dashboard'),
-                'tenaga_medis' => route('medis.dashboard'),
+                'tenaga_medis', 'nakes' => route('medis.dashboard'), // Support both 'tenaga_medis' and 'nakes'
+                'pengasuh' => route('pengasuh.dashboard'),
                 default => route('dashboard'),
             };
 

@@ -112,7 +112,7 @@
             $role = auth()->user()->role;
             if ($role === 'admin') {
                 $homeRoute = route('admin.dashboard');
-            } elseif ($role === 'tenaga_medis') {
+            } elseif ($role === 'tenaga_medis' || $role === 'nakes') {
                 $homeRoute = route('medis.dashboard');
             }
         }
@@ -145,7 +145,7 @@
                         Instruksi Obat
                     </a>
                 
-                @elseif(auth()->user()->role === 'tenaga_medis')
+                @elseif(auth()->user()->role === 'tenaga_medis' || auth()->user()->role === 'nakes')
                     {{-- == LINK SIDEBAR TENAGA MEDIS == --}}
                     <a class="side-btn @if(request()->routeIs('medis.riwayat')) active @endif" href="{{ route('medis.riwayat') }}">
                         Riwayat Kondisi
@@ -169,5 +169,23 @@
     </div>
 
     @yield('scripts')
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", function() {
+                navigator.serviceWorker.register("/sw.js")
+                    .then(function(registration) {
+                        console.log("Service Worker registered successfully:", registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.error("Service Worker registration failed:", error);
+                    });
+            });
+        }
+    </script>
+    
+    <!-- Push Notification Service -->
+    <script src="{{ asset('push-notification.js') }}"></script>
 </body>
 </html>
