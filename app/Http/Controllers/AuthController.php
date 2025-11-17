@@ -7,44 +7,59 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    /**
+     * Tampilkan form login
+     */
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
+    /**
+     * Proses login user
+     */
     public function login(Request $request)
     {
+        // ✅ Validasi input
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
-        $remember = (bool) $request->boolean('remember');
+        // ✅ Cek apakah "remember me" dicentang
+        $remember = $request->boolean('remember');
 
-        if (\Auth::attempt($credentials, $remember)) {
+        // ✅ Coba login
+        if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
-            $role = auth()->user()->role ?? 'user';
-            $target = match($role) {
+
+            $user = Auth::user();
+            $role = $user->role ?? 'user';
+
+            $redirectTo = match ($role) {
                 'admin' => route('admin.dashboard'),
-                'nakes' => route('medis.dashboard'),
-                default => route('dashboard')
+                'tenaga_medis' => route('medis.dashboard'),
+                default => route('dashboard'),
             };
-            return redirect()->intended($target);
+
+            return redirect()->intended($redirectTo);
         }
 
+        // ❌ Jika gagal login
         return back()->withErrors([
             'email' => 'Email atau password salah.',
         ])->onlyInput('email');
     }
 
+    /**
+     * Logout user
+     */
     public function logout(Request $request)
     {
-        \Auth::logout();
+        Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect()->route('login');
     }
 }
-
-
