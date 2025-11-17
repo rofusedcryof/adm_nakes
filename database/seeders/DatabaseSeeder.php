@@ -54,6 +54,17 @@ class DatabaseSeeder extends Seeder
                 'role' => 'user',
             ]
         );
+        $pengasuh = User::updateOrCreate(
+            ['email' => 'pengasuh@example.com'],
+            [
+                'name' => 'pengasuh',
+                'password' => Hash::make('123456'),
+                'role' => 'pengasuh',
+            ]
+        );
+
+
+
 
         // Create Admin record
         if ($adminUser) {
@@ -87,16 +98,29 @@ class DatabaseSeeder extends Seeder
             ['nama_lansia' => 'Bapak Joko', 'umur' => '1950-11-21', 'alamat' => 'Jl. Kenanga', 'jenis_kelamin' => 'L']
         );
 
+        // Hubungkan semua lansia dengan tenaga medis dan keluarga
         if ($medis) {
+            // Hubungkan medis dengan l1
             DB::table('medis_lansia')->updateOrInsert([
                 'medis_user_id' => $medis->id,
                 'lansia_id' => $l1->id,
             ], []);
+            // Hubungkan medis dengan l2 juga
+            DB::table('medis_lansia')->updateOrInsert([
+                'medis_user_id' => $medis->id,
+                'lansia_id' => $l2->id,
+            ], []);
         }
         if ($keluargaUser) {
+            // Hubungkan keluarga dengan l1
             DB::table('keluarga_lansia')->updateOrInsert([
                 'keluarga_user_id' => $keluargaUser->id,
                 'lansia_id' => $l1->id,
+            ], ['hubungan' => 'anak']);
+            // Hubungkan keluarga dengan l2 juga
+            DB::table('keluarga_lansia')->updateOrInsert([
+                'keluarga_user_id' => $keluargaUser->id,
+                'lansia_id' => $l2->id,
             ], ['hubungan' => 'anak']);
 
             // Create Keluarga record

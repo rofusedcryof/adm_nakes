@@ -112,6 +112,8 @@
                 
                 <div class="card-header">
                     <h2 style="margin:0;">Jadwal Kegiatan Lansia</h2>
+
+                    <a class="btn-action btn-tambah" href="{{ route('admin.jadwal.create') }}">Tambah</a>
                 </div>
 
                 @if(session('status'))
