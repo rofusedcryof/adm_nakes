@@ -3,68 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>HEALTH SYNC - Login</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <style>
-        body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; background:#ffffff; margin:0; }
-        .frame { max-width: 360px; margin: 2rem auto; border: 2px solid #2563eb; padding: 0; background:#fff; }
-        .header { background:#0f766e; color:#ffffff; text-align:center; padding:.6rem 1rem; font-weight:800; letter-spacing:.8px; }
-        .content { padding: 1.25rem; }
-        h1 { margin: .25rem 0 1rem; font-size: 1.25rem; text-align:center; letter-spacing:.5px; }
-        .field { margin-bottom: .9rem; }
-        .label { display:block; font-size:.72rem; font-weight:800; letter-spacing:.6px; margin-bottom:.35rem; color:#111827; text-transform:uppercase; }
-        .control { width:100%; padding:.55rem .65rem; border: 0; background:#e5e7eb; border-radius:2px; font-size:.95rem; }
-        .error { color:#b91c1c; font-size:.82rem; margin:.4rem 0; }
-        .actions { margin-top:.6rem; }
-        .btn-primary { width:100%; background:#2563eb; color:#fff; border:0; padding:.55rem 1rem; border-radius:2px; font-weight:800; cursor:pointer; }
-        .btn-primary:hover { background:#1d4ed8; }
-        .muted { text-align:center; color:#111827; font-size:.8rem; margin-top:.6rem; }
-        .muted a { color:#2563eb; text-decoration:underline; }
+        /* ===== GLOBAL RESET ===== */
+        * {
+            box-sizing: border-box;
+            font-family: 'Poppins', system-ui, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #2A857D, #1B4E47);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        /* ===== BACKGROUND ANIMATION ===== */
+        .bg-circles::before,
+        .bg-circles::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            animation: float 8s ease-in-out infinite alternate;
+        }
+
+        .bg-circles::before {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            left: -100px;
+        }
+
+        .bg-circles::after {
+            width: 500px;
+            height: 500px;
+            bottom: -150px;
+            right: -150px;
+        }
+
+        @keyframes float {
+            from { transform: translateY(0); }
+            to { transform: translateY(40px); }
+        }
+
+        /* ===== LOGIN CARD ===== */
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== LOGO AREA ===== */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header img {
+            width: 80px;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .app-title {
+            font-size: 1.9rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .sub-title {
+            font-size: 1.1rem;
+            opacity: 0.85;
+            font-weight: 500;
+        }
+
+        /* ===== FORM ===== */
+        .form-group {
+            margin-top: 1.2rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+            color: #e8e8e8;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 10px;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            color: #222;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(42, 133, 125, 0.4);
+        }
+
+        /* ===== ERROR MESSAGE ===== */
+        .error {
+            color: #ffdddd;
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+            text-align: center;
+        }
+
+        /* ===== BUTTON ===== */
+        .btn {
+            margin-top: 2rem;
+            width: 100%;
+            padding: 0.9rem;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(135deg, #1D665F, #0f4a44);
+            color: #fff;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #22776f, #165a52);
+            transform: translateY(-2px);
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .footer a {
+            color: #c7fff2;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
     </style>
-    <script>
-        // Tambah proteksi submit ganda sederhana
-        document.addEventListener('DOMContentLoaded', function(){
-            const form = document.getElementById('login-form');
-            if (!form) return;
-            form.addEventListener('submit', function(){
-                const btn = form.querySelector('button[type="submit"]');
-                if (btn) { btn.disabled = true; btn.textContent = 'Memproses...'; }
-            });
-        });
-    </script>
-  
-    
 </head>
 <body>
-    <div class="frame">
-        <div class="header">HEALTH SYNC</div>
-        <div class="content">
-        <h1>LOG IN</h1>
+
+    <div class="bg-circles"></div>
+
+    <div class="login-card">
+        <div class="header">
+            <img src="{{ asset('images/HEALTHSYNC.png') }}" alt="HEALTH SYNC Logo">
+            <div class="app-title">HEALTH SYNC</div>
+            <div class="sub-title">Masuk ke akun Anda</div>
+        </div>
 
         @if ($errors->any())
-            <div class="error" role="alert">{{ $errors->first() }}</div>
+            <div class="error">{{ $errors->first() }}</div>
         @endif
 
         <form id="login-form" method="POST" action="{{ route('login.post') }}">
             @csrf
-            <div class="field">
-                <label class="label" for="email">Email</label>
-                <input class="control" id="email" name="email" type="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus>
                 @error('email')<div class="error">{{ $message }}</div>@enderror
             </div>
 
-            <div class="field">
-                <label class="label" for="password">Password</label>
-                <input class="control" id="password" name="password" type="password" required autocomplete="current-password">
+            <div class="form-group">
+                <label for="password">Kata Sandi</label>
+                <input id="password" type="password" name="password" required>
                 @error('password')<div class="error">{{ $message }}</div>@enderror
             </div>
 
-            <div class="actions">
-                <button class="btn-primary" type="submit">LOGIN</button>
-            </div>
+            <button type="submit" class="btn">Masuk</button>
         </form>
+
+        <div class="footer"> HEALTH SYNC </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('login-form');
+            form.addEventListener('submit', () => {
+                const btn = form.querySelector('button[type="submit"]');
+                btn.disabled = true;
+                btn.textContent = 'Sedang memproses...';
+            });
+        });
+    </script>
+
 </body>
 </html>
-
-

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HEALTH SYNC - Instruksi Obat</title>
+    <title>HEALTH SYNC - Jadwal Kegiatan</title>
     <style>
         /* CSS LAYOUT LENGKAP */
         body { 
@@ -45,15 +45,14 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: relative; overflow: hidden;
         }
         .logout { background: transparent; color: #fff; border: 2px solid #fff; padding: .45rem .7rem; border-radius: 5px; font-weight: 600; cursor: pointer; }
-        
-        /* Konten Overlay (Tabel Instruksi Obat) */
-        .logo-placeholder { max-width: 300px; width: 100%; height: auto; filter: brightness(1.1); opacity: 0.6; }
-        .content-overlay {
-            /* PERUBAHAN: Mengatur margin dan ukuran yang lebih pas */
+
+        /* Konten Overlay (Tabel Jadwal) */
+        .card-overlay {
+            /* PERBAIKAN: Mengatur margin dan ukuran agar sama dengan file instruksi obat */
             position: absolute; 
-            top: 30px; /* Margin Atas */
-            left: 30px; /* Margin Kiri */
-            right: 30px; /* Margin Kanan */
+            top: 30px;    /* Margin Atas 30px */
+            left: 30px;   /* Margin Kiri 30px */
+            right: 30px;  /* Margin Kanan 30px */
             max-height: calc(100% - 60px); /* Tinggi total dikurangi margin atas & bawah */
             overflow-y: auto; 
             background: white; 
@@ -66,17 +65,22 @@
         }
         
         /* Gaya Tabel */
+        .card-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;
+        }
+        .btn-action {
+            background: #1f2937; color: #fff; padding: .45rem .8rem; border-radius: 6px;
+            text-decoration: none; border: none; cursor: pointer; font-size: .85rem;
+        }
+        .btn-tambah { background: #2A857D; }
+        .btn-kembali { background: #6c757d; }
+        .btn-hapus { background: #dc3545; }
+        .btn-edit { background: #1f2937; }
         table { width:100%; border-collapse:collapse; margin-top:1rem; }
         th, td { padding:.55rem .7rem; border-bottom:1px solid #e5e7eb; text-align:left; font-size:.9rem; }
         th { background:#e5f3f3; font-weight:800; }
-        .badge { padding:.25rem .5rem; border-radius:6px; font-size:.8rem; font-weight:600; }
-        .badge-aktif { background:#d1fae5; color:#065f46; }
-        .badge-selesai { background:#fee2e2; color:#991b1b; }
-        .table-btn { background:#1f2937; color:#fff; padding:.4rem .7rem; border-radius:6px; text-decoration:none; border:none; cursor:pointer; font-size:.8rem; margin-right: 0.3rem; }
-        
-        /* Utility */
-        .hidden { display: none !important; }
-        .alert-session { margin:.6rem 0; padding:.6rem; background:#ecfeff; border:1px solid #06b6d4; border-radius:8px;} 
+        form { display:inline; }
+        .logo-placeholder { max-width: 300px; width: 100%; height: auto; filter: brightness(1.1); opacity: 0.6; }
     </style>
 </head>
 <body>
@@ -90,78 +94,74 @@
     </div>
 
     <div class="wrap">
-        <aside class="sidebar" id="sidebar">
+        <aside class="sidebar">
             <div class="side-menu">
-                <a class="side-btn" id="btnJadwal" href="{{ route('admin.jadwal.home') }}">
+                <a class="side-btn active" href="{{ route('admin.jadwal.home') }}">
                     Jadwal Kegiatan
                 </a>
-                <a class="side-btn active" id="btnInstruksi" href="{{ route('admin.instruksi.index') }}">
+                <a class="side-btn" href="{{ route('admin.instruksi.index') }}">
                     Instruksi Obat
                 </a>
             </div>
         </aside>
         
         <main class="content">
-            {{-- Logo Besar (Background Placeholder) --}}
             <img class="logo-placeholder" src="{{ asset('images/HEALTHSYNC.png') }}" alt="HEALTHSYNC">
-            
-            {{-- Konten Overlay Instruksi Obat --}}
-            <div class="content-overlay" id="instruksiObatPanel">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
-                    <h2 style="margin:0; font-size: 1.3rem;">Instruksi Obat Lansia</h2>
+
+            <div class="card-overlay">
+                
+                <div class="card-header">
+                    <h2 style="margin:0;">Jadwal Kegiatan Lansia</h2>
                 </div>
 
-                @if(session('ok'))
-                    <div class="alert-session">{{ session('ok') }}</div>
+                @if(session('status'))
+                    <div style="background:#d1fae5; padding:.7rem 1rem; border-radius:6px; margin-bottom:1rem;">
+                        {{ session('status') }}
+                    </div>
                 @endif
-                
-                {{-- Tabel Konten Dinamis Anda --}}
+
                 <table>
                     <thead>
                         <tr>
+                            <th>ID Jadwal</th>
                             <th>Lansia</th>
-                            <th>Nama Obat</th>
-                            <th>Dosis</th>
-                            <th>Frekuensi</th>
-                            <th>Mulai</th>
-                            <th>Selesai</th>
-                            <th>Status</th>
-                            <th>Medis</th>
+                            <th>Tanggal</th>
+                            <th>Waktu</th>
+                            <th>Aktivitas</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
+
                     <tbody>
-                        @forelse ($items as $it)
+                        @forelse ($items as $item) 
                             <tr>
-                                <td>{{ $it->lansia->nama_lansia ?? '-' }}</td>
-                                <td><strong>{{ $it->nama_obat }}</strong></td>
-                                <td>{{ $it->dosis ?? '-' }}</td>
-                                <td>{{ $it->frekuensi ?? '-' }}</td>
-                                <td>{{ $it->mulai_pada?->format('d-m-Y') ?? '-' }}</td>
-                                <td>{{ $it->selesai_pada?->format('d-m-Y') ?? '-' }}</td>
+                                <td>{{ $item->id_jadwal }}</td>
+                                <td>{{ $item->lansia->nama_lansia ?? 'N/A' }}</td>
+                                <td>{{ $item->tanggal?->format('d-m-Y') ?? '-' }}</td>
+                                <td>{{ $item->waktu ?? '-' }}</td>
+                                <td>{{ $item->aktivitas }}</td>
                                 <td>
-                                    <span class="badge {{ $it->status === 'aktif' ? 'badge-aktif' : 'badge-selesai' }}">
-                                        {{ ucfirst($it->status ?? '-') }}
-                                    </span>
-                                </td>
-                                <td>{{ $it->medis->name ?? '-' }}</td>
-                                <td style="display:flex; gap:0.3rem; align-items:center;">
-                                    <a class="table-btn" href="{{ route('admin.instruksi.edit', $it) }}">Edit</a>
-                                    <form method="POST" action="{{ route('admin.instruksi.destroy', $it) }}" onsubmit="return confirm('Hapus instruksi obat ini?')" style="display:inline;">
+                                    <a class="btn-action btn-edit" href="{{ route('admin.jadwal.edit', $item) }}">Edit</a>
+
+                                    <form method="POST" action="{{ route('admin.jadwal.destroy', $item) }}" 
+                                            onsubmit="return confirm('Hapus jadwal ini?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="table-btn" type="submit" style="background:#dc2626;">Hapus</button>
+                                        <button type="submit" class="btn-action btn-hapus">Hapus</button>
                                     </form>
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="9">Belum ada data.</td></tr>
-                        @endforelse
+                            <tr>
+                                <td colspan="6">Belum ada jadwal kegiatan.</td>
+                            </tr>
+                        @endforelse 
                     </tbody>
                 </table>
-                <div style="margin-top:1rem;">
-                    {{ $items->links() }}
+                 <div style="margin-top:1rem;">
+                    {{ $items->links() }} 
                 </div>
+
             </div>
         </main>
     </div>
