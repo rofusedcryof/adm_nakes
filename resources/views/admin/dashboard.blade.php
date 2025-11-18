@@ -6,19 +6,20 @@
     <title>HEALTH SYNC - Welcome</title>
     <style>
         /* CSS Umum dan Reset */
-        body { 
-            margin: 0; 
-            font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial; 
-            background: #f0f9f9; 
-            display: flex; 
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 0; 
-            box-sizing: border-box;
-            overflow: hidden; 
-            position: relative;
-        }
+       body { 
+         margin: 0; 
+         font-family: system-ui, sans-serif;
+         background: linear-gradient(135deg, #2A857D, #1B4E47);
+         display: flex; 
+          justify-content: center;
+         align-items: center;
+        min-height: 100vh;
+         padding: 0; 
+         box-sizing: border-box;
+         overflow: hidden; 
+         position: relative;
+}
+
 
         /* CONTAINER UTAMA (Wrapper Putih) */
         .main-wrapper {
@@ -26,7 +27,7 @@
             max-width: 1200px; 
             height: 80vh; 
             max-height: 650px; 
-            background: #fff; 
+            background: #dff4f0; 
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             position: relative; 
@@ -131,6 +132,29 @@
             flex: 1 1 45%;
             margin: 0;
         }
+        .nav-button-form button.nav-button {
+        flex: 1 1 45%;
+        width: 100%;
+        padding: 1rem 0.8rem;
+        background: #1D665F;
+        color: #fff;
+        font-weight: 700;
+        font-size: 1rem;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        cursor: pointer;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        transition: 0.3s ease;
+    }
+
+    .nav-button-form button.nav-button:hover {
+        background: #165751;
+        transform: translateY(-3px);
+    }
+
 
 
     </style>
@@ -146,15 +170,17 @@
                 <a class="nav-button" href="{{ route('admin.jadwal.home') }}">
                     Jadwal Kegiatan
                 </a>
+
                 <a class="nav-button" href="{{ route('admin.instruksi.index') }}">
                     Instruksi Obat
                 </a>
+
                 <form class="nav-button-form" action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="nav-button nav-button--logout">
-                        Logout
-                    </button>
-                </form>
+                @csrf
+                <button type="submit" class="nav-button">Logout</button>
+            </form>
+
+
                 
             </div>
         </div>

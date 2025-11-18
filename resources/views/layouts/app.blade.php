@@ -123,11 +123,6 @@
             <div class="brand">HEALTH SYNC</div>
             <div class="nav-right">
                 <a href="{{ $homeRoute }}">HOME</a>
-                <a href="#">NOTIFIKASI</a>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button class="logout" type="submit">Keluar</button>
-                </form>
             </div>
         </div>
     </div>
