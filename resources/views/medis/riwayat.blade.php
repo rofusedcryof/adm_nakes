@@ -4,344 +4,211 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HEALTH SYNC - Riwayat Kondisi Lansia</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+
     <style>
-        :root {
-            --primary: #1f8a8a;
-            --secondary: #166969;
-            --dark: #0f172a;
-            --light: #ffffff;
-        }
-
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #e6f4f1, #d4efec);
+            margin: 0;
             min-height: 100vh;
-            color: var(--dark);
-            overflow-x: hidden;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu;
+            background: #f0f9f9;
+            padding: 1.5rem;
         }
 
-        /* ===== Topbar ===== */
+        /* === TOPBAR === */
         .topbar {
-            background: linear-gradient(90deg, var(--primary), #0e4d4d);
-            color: var(--light);
-            padding: .8rem 1.5rem;
+            background: #2A857D;
+            color: #fff;
+            padding: 1.5rem 2.5rem;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-        }
-
-        .brand {
-            display: flex;
             align-items: center;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .brand {
             font-weight: 900;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             letter-spacing: 1px;
         }
-
-        .brand svg {
-            margin-right: 10px;
-        }
-
-        .nav {
+        .nav-right {
             display: flex;
-            align-items: center;
             gap: 1.5rem;
+            align-items: center;
         }
-
-        .nav a {
+        .nav-right a {
+            color: white;
             font-weight: 700;
-            transition: 0.25s;
-            padding: .5rem 1rem;
-            border-radius: 9999px;
-        }
-
-        .nav a:hover {
-            background: rgba(255,255,255,0.15);
-        }
-
-        .nav button {
-            background: #0f172a;
-            color: #fff;
-            font-weight: 800;
-            border: none;
-            border-radius: 9999px;
-            padding: .5rem 1.2rem;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .nav button:hover {
-            background: #334155;
-        }
-
-        /* ===== Layout ===== */
-        .wrap {
-            display: flex;
-            min-height: calc(100vh - 64px);
-        }
-
-        .sidebar {
-            width: 270px;
-            background: var(--secondary);
-            padding: 1.8rem 1.2rem;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 4px 0 10px rgba(0,0,0,0.15);
-        }
-
-        .side-btn {
-            display: block;
-            background: transparent;
-            color: #e5f8f8;
-            padding: .8rem 1rem;
-            border-radius: 10px;
-            font-weight: 700;
-            margin-bottom: 1rem;
             text-decoration: none;
-            border: 2px solid transparent;
-            transition: 0.25s;
         }
-
-        .side-btn:hover {
-            background: rgba(255,255,255,0.15);
-            border-color: rgba(255,255,255,0.3);
-        }
-
-        .side-btn.active {
-            background: var(--primary);
+        .logout {
+            background: transparent;
+            border: 2px solid #fff;
             color: #fff;
-            border-color: #0f172a;
-        }
-
-        /* ===== Content ===== */
-        .content {
-            flex: 1;
-            padding: 2rem 3rem;
-            background: rgba(255,255,255,0.6);
-            backdrop-filter: blur(8px);
-            position: relative;
-        }
-
-        .panel {
-            background: var(--light);
-            border-radius: 16px;
-            border: 2px solid rgba(15,23,42,0.15);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            padding: 2rem;
-            position: relative;
-            z-index: 2;
-        }
-
-        .title {
-            font-weight: 900;
-            font-size: 1.8rem;
-            color: var(--dark);
-            margin-bottom: 1.5rem;
-            position: relative;
-        }
-
-        .title::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            left: 0;
-            width: 80px;
-            height: 4px;
-            background: var(--primary);
-            border-radius: 2px;
-        }
-
-        /* ===== Select ===== */
-        .label {
-            font-weight: 700;
-            color: var(--dark);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: .5rem;
-            font-size: 0.8rem;
-        }
-
-        .select {
-            width: 100%;
-            max-width: 350px;
-            padding: 0.7rem 1rem;
-            border-radius: 10px;
-            background: var(--primary);
-            color: #fff;
+            padding: .45rem .7rem;
+            border-radius: 5px;
             font-weight: 600;
-            border: 2px solid var(--dark);
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg fill='%23ffffff' height='24' viewBox='0 0 24 24' width='24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.8rem center;
-            background-size: 1rem;
             cursor: pointer;
         }
 
-        /* ===== Table ===== */
-        .box {
-            margin-top: 2rem;
-            border-radius: 12px;
-            overflow-x: auto;
-            border: 2px solid rgba(15,23,42,0.15);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+        /* === CONTENT AREA === */
+        .content {
+            background: #2A857D;
+            border-radius: 15px;
+            padding: 2.5rem;
+            min-height: calc(100vh - 150px);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #fff;
-            color: var(--dark);
-        }
-
-        th {
-            background: var(--primary);
-            color: #fff;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-size: 0.9rem;
-        }
-
-        th, td {
-            padding: 0.9rem 1rem;
-            text-align: center;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        tr:hover {
-            background-color: #f1f9f8;
-        }
-
-        /* ===== Empty Data ===== */
-        .empty {
-            text-align: center;
-            padding: 3rem 1rem;
-            font-size: 1.2rem;
-            font-weight: 600;
-            opacity: 0.7;
-        }
-
-        /* ===== Logo Background ===== */
-        .logo-bg {
+        .logo-placeholder {
+            max-width: 320px;
+            opacity: 0.45;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            opacity: 0.08;
-            z-index: 1;
-            pointer-events: none;
-            text-align: center;
         }
 
-        .logo-bg svg {
-            width: 220px;
-            height: 220px;
-            fill: var(--primary);
+        /* --- PANEL PUTIH --- */
+        .content-overlay {
+    position: relative;        /* ubah dari absolute → relative */
+    width: 95%;
+    max-width: 1300px;
+    margin: 0 auto;            /* supaya tetap di tengah */
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    min-height: 200px;         /* boleh diubah sesuai kebutuhan */
+    z-index: 10;
+}
+
+
         }
 
-        .logo-bg .logo-text {
-            font-size: 2rem;
+        /* Teks Judul */
+        h2 {
+            font-size: 1.6rem;
             font-weight: 900;
-            letter-spacing: 1px;
+            margin-bottom: 1rem;
         }
 
-        /* ===== Responsive ===== */
-        @media (max-width: 768px) {
-            .wrap {
-                flex-direction: column;
-            }
-            .sidebar {
-                width: 100%;
-                flex-direction: row;
-                justify-content: space-around;
-                padding: 1rem;
-            }
-            .content {
-                padding: 1rem;
-            }
+        /* Dropdown */
+        label {
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: .3rem;
+            display: block;
+        }
+        .select {
+            width: 300px;
+            padding: .55rem .7rem;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        /* Box untuk tabel */
+       .box {
+    margin-top: 1.5rem;
+    border-radius: 12px;
+    border: 2px solid #e5e7eb;
+    padding: 1.5rem;
+    text-align: center;
+    height: 260px;     /* TINGGI PANEL PUTIH */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th {
+            background: #2A857D;
+            color: white;
+            padding: .7rem;
+            font-weight: 800;
+        }
+        th, td {
+            border-bottom: 1px solid #e5e7eb;
+            padding: .7rem;
+            text-align: center;
         }
     </style>
 </head>
+
 <body>
+
+    <!-- === TOPBAR === -->
     <div class="topbar">
-        <div class="brand">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="3" width="28" height="28" viewBox="0 0 24 24">
-                <path d="M12 2v20M4 12h16"></path>
-            </svg>
-            HEALTH SYNC
+        <div class="brand">HEALTH SYNC</div>
+
+        <div class="nav-right">
+             <a href="#">NOTIFIKASI</a>
+            <a href="{{ route('medis.dashboard') }}">HOME</a>
+
         </div>
-        <div class="nav">
-            <a href="{{ route('medis.dashboard') }}">Home</a>
-            <a href="#">Notifikasi</a>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit">Keluar</button>
+    </div>
+
+    <!-- === CONTENT === -->
+    <main class="content">
+        <img class="logo-placeholder" src="{{ asset('images/HEALTHSYNC.png') }}">
+
+        <div class="content-overlay">
+            
+            <h2>Riwayat Kondisi Lansia</h2>
+
+            <form method="GET" action="{{ route('medis.riwayat') }}">
+                <label>Nama Lansia</label>
+                <select class="select" name="lansia_id" onchange="this.form.submit()">
+                    @foreach ($lansia as $l)
+                        <option value="{{ $l->id }}" @selected($selectedId == $l->id)>
+                            {{ $l->nama_lansia }} ({{ $l->id_lansia }})
+                        </option>
+                    @endforeach
+                </select>
             </form>
-        </div>
-    </div>
 
-    <div class="wrap">
-        <aside class="sidebar">
-            <a href="{{ route('medis.riwayat') }}" class="side-btn active">Riwayat Kondisi Lansia</a>
-            <a href="{{ route('medis.instruksi.index') }}" class="side-btn">Instruksi Obat</a>
-        </aside>
-
-        <main class="content">
-            <div class="logo-bg">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
-                <div class="logo-text">HEALTH SYNC</div>
-            </div>
-
-            <div class="panel">
-                <div class="title">Riwayat Kondisi Lansia</div>
-
-                <form method="GET" action="{{ route('medis.riwayat') }}">
-                    <label class="label">Nama Lansia</label>
-                    <select class="select" name="lansia_id" onchange="this.form.submit()">
-                        @foreach ($lansia as $l)
-                            <option value="{{ $l->id }}" @selected($selectedId == $l->id)>
-                                {{ $l->nama_lansia }} ({{ $l->id_lansia }})
-                            </option>
-                        @endforeach
-                    </select>
-                </form>
-
-                <div class="box">
-                    @if($riwayat->isEmpty())
-                        <div class="empty">Tidak ada data riwayat.</div>
-                    @else
-                        <table>
-                            <thead>
+            <div class="box">
+                @if($riwayat->isEmpty())
+                    <p style="margin-top: 2rem; font-size: 1.1rem; color: #555;">
+                        Tidak ada data riwayat.
+                    </p>
+                @else
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Waktu</th>
+                                <th>TD (Sys/Dia)</th>
+                                <th>Nadi</th>
+                                <th>Suhu</th>
+                                <th>Gula</th>
+                                <th>Catatan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($riwayat as $r)
                                 <tr>
-                                    <th>Waktu</th>
-                                    <th>TD (Sys/Dia)</th>
-                                    <th>Nadi</th>
-                                    <th>Suhu</th>
-                                    <th>Gula</th>
-                                    <th>Catatan</th>
+                                    <td>{{ $r->diukur_pada->format('d-m-Y H:i') }}</td>
+                                    <td>{{ $r->sistol }} / {{ $r->diastol }}</td>
+                                    <td>{{ $r->nadi }}</td>
+                                    <td>{{ $r->suhu }}°C</td>
+                                    <td>{{ $r->gula_darah }} mg/dL</td>
+                                    <td>{{ $r->catatan }}</td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($riwayat as $r)
-                                    <tr>
-                                        <td>{{ $r->diukur_pada->format('d-m-Y H:i') }}</td>
-                                        <td>{{ $r->sistol }} / {{ $r->diastol }}</td>
-                                        <td>{{ $r->nadi }}</td>
-                                        <td>{{ $r->suhu }}°C</td>
-                                        <td>{{ $r->gula_darah }} mg/dL</td>
-                                        <td>{{ $r->catatan }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    @endif
-                </div>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
             </div>
-        </main>
-    </div>
+
+        </div>
+    </main>
+
 </body>
 </html>
