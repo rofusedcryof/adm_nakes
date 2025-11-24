@@ -6,124 +6,127 @@
     <title>HEALTH SYNC - Dashboard Medis</title>
 
     <style>
-        body { 
-            margin: 0; 
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
             font-family: system-ui, sans-serif;
             background: linear-gradient(135deg, #2A857D, #1B4E47);
-            display: flex; 
+            display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 0; 
-            overflow: hidden; 
+            padding: 20px;
         }
 
+        /* WRAPPER */
         .main-wrapper {
-            width: 90%; 
-            max-width: 1200px; 
-            height: 80vh; 
-            max-height: 650px; 
-            background: #dff4f0; 
+            width: 100%;
+            max-width: 1200px;
+            background: #dff4f0;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            position: relative; 
-            display: flex; 
-            align-items: center;
-            overflow: hidden; 
+            display: flex;
+            gap: 2rem;
+            padding: 2rem 2.5rem;
         }
 
-        .main-wrapper::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 90%;
-            height: 110%;
-            background: url('{{ asset('images/perawat.png') }}') no-repeat;
-            background-size: 40%; 
-            background-position: right center; 
-            z-index: 1; 
-        }
-
+        /* KIRI - CARD */
         .content-card {
-            background: #2A857D; 
-            width: 450px; 
-            height: 85%; 
+            background: #2A857D;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 2rem 2rem 2.5rem;
             display: flex;
             flex-direction: column;
-            justify-content: space-around; 
+            justify-content: space-between;
             align-items: center;
-            padding: 2.5rem 2rem; 
-            box-sizing: border-box;
-            position: absolute;
-            left: 5%; 
-            top: 50%;
-            transform: translate(0, -50%); 
-            z-index: 10; 
+            flex: 1 1 350px;
+            max-width: 430px;
         }
 
         .app-logo {
-            max-width: 75%; 
             width: 100%;
+            max-width: 260px;
             height: auto;
-            filter: brightness(1.2); 
-            opacity: 0.9;
-            margin-top: -1rem; 
-        }
-
-        .slogan-overlay {
-            position: absolute;
-            top: 10%;
-            right: 10%;
-            width: 40%; 
-            color: #2A857D;
-            text-align: right;
-            font-weight: 800;
-            font-size: 1.6rem;
-            z-index: 5;
+            margin-bottom: 2rem;
         }
 
         .nav-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem; 
-            justify-content: center;
             width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
         .nav-button {
-            background: #1D665F; 
+            background: #1D665F;
             color: #fff;
-            padding: 1rem 0.8rem; 
-            border-radius: 8px;
+            padding: 1rem;
+            border-radius: 10px;
             text-decoration: none;
             font-weight: 700;
             font-size: 1rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            white-space: nowrap; 
-            flex: 1 1 45%;
-            text-align: center;
             border: none;
+            text-align: center;
             cursor: pointer;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: background-color .25s ease, transform .2s ease;
+            width: 100%;
         }
 
         .nav-button:hover {
             background: #165751;
             transform: translateY(-3px);
         }
+
+        /* KANAN - SLOGAN + PERAWAT */
+        .right-panel {
+            flex: 1 1 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            gap: 1.5rem;
+        }
+
+        .slogan {
+            color: #2A857D;
+            font-weight: 800;
+            font-size: 1.6rem;
+            line-height: 1.2;
+        }
+
+        .medic-img {
+            width: 100%;
+            max-width: 420px;
+            height: auto;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .main-wrapper {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .content-card, .right-panel {
+                max-width: 100%;
+            }
+        }
     </style>
+
 </head>
 <body>
 
     <div class="main-wrapper">
 
+        <!-- KIRI: CARD -->
         <div class="content-card">
-            <img class="app-logo" src="{{ asset('images/HEALTHSYNC.png') }}" alt="HEALTHSYNC ELDERLY MONITORING">
+            <img class="app-logo" src="{{ asset('images/HEALTHSYNC.png') }}" alt="HEALTHSYNC">
 
             <div class="nav-buttons">
                 <a class="nav-button" href="{{ route('medis.riwayat') }}">
@@ -134,16 +137,19 @@
                     Instruksi Obat
                 </a>
 
-                <form action="{{ route('logout') }}" method="POST" style="flex:1 1 45%; display:flex;">
+                <form action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button type="submit" class="nav-button" style="width:100%;">Logout</button>
+                    <button type="submit" class="nav-button">Logout</button>
                 </form>
-
             </div>
         </div>
 
-        <div class="slogan-overlay">
-            Caring with heart, united in Wellness
+        <!-- KANAN: SLOGAN + GAMBAR -->
+        <div class="right-panel">
+            <div class="slogan">
+                Caring with heart, united in Wellness
+            </div>
+            <img src="{{ asset('images/perawat.png') }}" class="medic-img" alt="Perawat">
         </div>
 
     </div>
