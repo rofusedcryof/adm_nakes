@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HEALTH SYNC - Jadwal Kegiatan</title>
     <style>
-        /* CSS LAYOUT LENGKAP */
         body { 
             margin: 0; 
             min-height: 100vh;
@@ -54,14 +53,12 @@
             font-size: 1rem; 
         }
 
-        /* WRAP TANPA SIDEBAR */
         .wrap { 
             width: 100%;
             display: flex;
             justify-content: center;
         }
 
-        /* CONTENT FULL WIDTH */
         .content { 
             flex: 1; 
             display: flex; 
@@ -87,7 +84,6 @@
             opacity: 0.6; 
         }
 
-        /* Overlay Card */
         .card-overlay {
             position: absolute; 
             top: 30px;
@@ -103,7 +99,6 @@
             width: auto;
         }
 
-        /* Gaya Tabel */
         .card-header {
             display: flex; 
             justify-content: space-between; 
@@ -112,25 +107,73 @@
         }
 
         .btn-action {
-            background: #1f2937; 
-            color: #fff; 
-            padding: .45rem .8rem; 
+            padding: .45rem .9rem;
             border-radius: 6px;
-            text-decoration: none; 
-            border: none; 
-            cursor: pointer; 
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
             font-size: .85rem;
+            text-decoration: none;
         }
 
         .btn-tambah { background: #2A857D; }
-        .btn-hapus { background: #dc3545; }
-        .btn-edit  { background: #1f2937; }
 
-        table { width:100%; border-collapse:collapse; margin-top:1rem; }
+        table { width:100%; border-collapse:collapse; margin-top:1rem; min-width:700px; }
         th, td { padding:.55rem .7rem; border-bottom:1px solid #e5e7eb; text-align:left; font-size:.9rem; }
         th { background:#e5f3f3; font-weight:800; }
 
         form { display:inline; }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        /* ---------------------------- */
+        /* EDIT + HAPUS  */
+        /* ---------------------------- */
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        /* Hilangkan underline */
+        .action-buttons a {
+            text-decoration: none;
+        }
+
+        .btn-edit, .btn-hapus {
+            padding: .45rem .9rem;
+            font-size: .85rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: white;
+            flex: 1;                 /* Kunci agar tombol sama panjang */
+            text-align: center;
+            display: inline-block;
+        }
+
+        .btn-edit { background: #1f2937; }
+        .btn-hapus { background: #dc3545; }
+
+        @media (max-width: 600px) {
+            .action-buttons {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .btn-edit,
+            .btn-hapus {
+                width: 100%;
+                max-width: 120px;
+                flex: none;
+            }
+        }
     </style>
 </head>
 
@@ -146,9 +189,6 @@
     </div>
 
     <div class="wrap">
-
-        <!-- SIDEBAR DIHAPUS TOTAL -->
-
         <main class="content">
 
             <img class="logo-placeholder" src="{{ asset('images/HEALTHSYNC.png') }}" alt="HEALTHSYNC">
@@ -166,45 +206,53 @@
                     </div>
                 @endif
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID Jadwal</th>
-                            <th>Lansia</th>
-                            <th>Tanggal</th>
-                            <th>Waktu</th>
-                            <th>Aktivitas</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @forelse ($items as $item)
+                <div class="table-container">
+                    <table>
+                        <thead>
                             <tr>
-                                <td>{{ $item->id_jadwal }}</td>
-                                <td>{{ $item->lansia->nama_lansia ?? 'N/A' }}</td>
-                                <td>{{ $item->tanggal?->format('d-m-Y') ?? '-' }}</td>
-                                <td>{{ $item->waktu ?? '-' }}</td>
-                                <td>{{ $item->aktivitas }}</td>
-
-                                <td>
-                                    <a class="btn-action btn-edit" href="{{ route('admin.jadwal.edit', $item) }}">Edit</a>
-
-                                    <form method="POST" action="{{ route('admin.jadwal.destroy', $item) }}" 
-                                        onsubmit="return confirm('Hapus jadwal ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn-action btn-hapus">Hapus</button>
-                                    </form>
-                                </td>
+                                <th>ID Jadwal</th>
+                                <th>Lansia</th>
+                                <th>Tanggal</th>
+                                <th>Waktu</th>
+                                <th>Aktivitas</th>
+                                <th>Aksi</th>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6">Belum ada jadwal kegiatan.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+
+                        <tbody>
+                            @forelse ($items as $item)
+                                <tr>
+                                    <td>{{ $item->id_jadwal }}</td>
+                                    <td>{{ $item->lansia->nama_lansia ?? 'N/A' }}</td>
+                                    <td>{{ $item->tanggal?->format('d-m-Y') ?? '-' }}</td>
+                                    <td>{{ $item->waktu ?? '-' }}</td>
+                                    <td>{{ $item->aktivitas }}</td>
+
+                                    <td>
+                                        <div class="action-buttons">
+
+                                            <a href="{{ route('admin.jadwal.edit', $item) }}" class="btn-edit">
+                                                Edit
+                                            </a>
+
+                                            <form method="POST" action="{{ route('admin.jadwal.destroy', $item) }}" 
+                                                onsubmit="return confirm('Hapus jadwal ini?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn-hapus">Hapus</button>
+                                            </form>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6">Belum ada jadwal kegiatan.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
 
                 <div style="margin-top:1rem;">
                     {{ $items->links() }}

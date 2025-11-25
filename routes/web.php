@@ -6,7 +6,7 @@ use App\Http\Controllers\AdminJadwalKegiatanController;
 use App\Http\Controllers\AdminInstruksiObatController;
 use App\Http\Controllers\MedisInstruksiObatController;
 use App\Http\Controllers\MedisDashboardController;
-use App\Http\Controllers\KeluargaController;
+use App\Http\Controllers\MedisRiwayatController;
 use App\Http\Controllers\PengasuhController;
 use App\Http\Controllers\PengasuhDashboardController;
 use App\Http\Controllers\PushNotificationController;
@@ -87,27 +87,7 @@ Route::prefix('medis')
     ->as('medis.')
     ->group(function () {
         Route::get('/', [MedisDashboardController::class, 'dashboard'])->name('dashboard');
-        Route::get('/riwayat', function () {
-            $role = auth()->user()->role;
-            if ($role !== 'tenaga_medis' && $role !== 'nakes') {
-                return redirect()->route('dashboard');
-            }
-
-            $lansia = \App\Models\Lansia::select('id', 'nama_lansia', 'id_lansia')
-                ->orderBy('nama_lansia')
-                ->get();
-
-            $selectedId = request('lansia_id') ?: ($lansia->first()->id ?? null);
-            $riwayat = collect();
-
-            if ($selectedId) {
-                $riwayat = \App\Models\RiwayatKondisi::where('lansia_id', $selectedId)
-                    ->orderByDesc('diukur_pada')
-                    ->get();
-            }
-
-            return view('medis.riwayat', compact('lansia', 'selectedId', 'riwayat'));
-        })->name('riwayat');
+        Route::get('/riwayat', [MedisRiwayatController::class, 'index'])->name('riwayat');
 
         Route::resource('/instruksi', MedisInstruksiObatController::class)->except(['show']);
     });
@@ -126,4 +106,6 @@ Route::prefix('pengasuh')
         Route::get('/kondisi-darurat', [PengasuhDashboardController::class, 'kondisiDarurat'])->name('kondisi-darurat');
         Route::post('/kirim-notifikasi-darurat', [PengasuhDashboardController::class, 'kirimNotifikasiDarurat'])->name('kirim-notifikasi-darurat');
         Route::post('/kirim-notifikasi-darurat-langsung', [PengasuhDashboardController::class, 'kirimNotifikasiDaruratLangsung'])->name('kirim-notifikasi-darurat-langsung');
+        Route::get('kegiatan-lansia', [PengasuhController::class, 'kegiatanIndex'])->name('kegiatan-lansia.index');
+        Route::get('kegiatan-lansia/{id_lansia}', [PengasuhController::class, 'kegiatanShow'])->name('kegiatan-lansia.show');
     });
