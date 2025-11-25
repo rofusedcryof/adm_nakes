@@ -5,165 +5,170 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HEALTH SYNC - Welcome</title>
     <style>
-        /* CSS Umum dan Reset */
-       body { 
-         margin: 0; 
-         font-family: system-ui, sans-serif;
-         background: linear-gradient(135deg, #2A857D, #1B4E47);
-         display: flex; 
-          justify-content: center;
-         align-items: center;
-        min-height: 100vh;
-         padding: 0; 
-         box-sizing: border-box;
-         overflow: hidden; 
-         position: relative;
-}
+        * {
+            box-sizing: border-box;
+        }
 
+        body {
+            margin: 0;
+            font-family: system-ui, sans-serif;
+            background: linear-gradient(135deg, #2A857D, #1B4E47);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-        /* CONTAINER UTAMA (Wrapper Putih) */
+        /* WRAPPER PUTIH */
         .main-wrapper {
-            width: 90%; 
-            max-width: 1200px; 
-            height: 80vh; 
-            max-height: 650px; 
-            background: #dff4f0; 
+            width: 100%;
+            max-width: 1200px;
+            background: #dff4f0;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            position: relative; 
-            display: flex; 
-            align-items: center;
-            overflow: hidden; 
+            display: flex;
+            gap: 2rem;
+            padding: 2rem 2.5rem;
         }
 
-        /* GAMBAR LANSIA SEBAGAI BACKGROUND */
-        .main-wrapper::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            /* Menggunakan gambar Lansia.png (asumsi ini adalah gambar lansia yang sedang menari) */
-            background: url('{{ asset('images/Lansia.png') }}') no-repeat;
-            background-size: 50%; /* Ukuran sedang untuk perawat/lansia */
-            background-position: right center; /* Posisi menempel di kanan tengah */
-            z-index: 1; 
-        }
-        
-        /* CARD KONTEN KIRI (HIJAU TUA) */
+        /* KIRI: CARD HIJAU */
         .content-card {
-            background: #2A857D; 
-            width: 450px; 
-            height: 85%; 
+            background: #2A857D;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 2rem 2rem 2.5rem;
             display: flex;
             flex-direction: column;
-            justify-content: space-around; 
+            justify-content: space-between;
             align-items: center;
-            padding: 2.5rem 2rem; 
-            box-sizing: border-box;
-            position: absolute;
-            left: 5%; 
-            top: 50%;
-            transform: translate(0, -50%); 
-            z-index: 10; 
-        }
-        
-        /* LOGO DI CARD KIRI */
-        .app-logo {
-            max-width: 75%; 
-            width: 100%;
-            height: auto;
-            filter: brightness(1.2); 
-            opacity: 0.9;
-            margin-top: -1rem; 
+            flex: 1 1 350px;       /* ikut mengecil */
+            max-width: 430px;      /* maksimum di desktop */
         }
 
-        /* SLOGAN DI ATAS GAMBAR LANSIA (KANAN) */
-        .slogan-overlay {
-            position: absolute;
-            top: 10%; /* Jarak dari atas */
-            right: 10%; /* Jarak dari kanan */
-            width: 40%; 
-            color: #2A857D; /* Warna teks hijau tua */
-            text-align: right;
-            font-weight: 800;
-            font-size: 1.5rem;
-            line-height: 1.2;
-            z-index: 5;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1); /* Tambahkan bayangan agar terlihat dari background */
-        }
-        
-        /* CONTAINER UNTUK TOMBOL */
-        .nav-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem; 
-            justify-content: center;
+        .app-logo {
             width: 100%;
-            margin-bottom: 1rem; 
+            max-width: 260px;
+            height: auto;
+            margin-bottom: 2rem;
         }
+
+        .nav-buttons {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
         .nav-button {
-            background: #1D665F; 
+            background: #1D665F;
             color: #fff;
-            padding: 1rem 0.8rem; 
-            border-radius: 8px;
+            padding: 1rem;
+            border-radius: 10px;
             text-decoration: none;
             font-weight: 700;
-            font-size: 1rem; 
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            white-space: nowrap; 
-            flex: 1 1 45%;
-            text-align: center;
+            font-size: 1rem;
             border: none;
+            text-align: center;
             cursor: pointer;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: background-color .25s ease, transform .2s ease;
+            width: 100%;
         }
+
         .nav-button:hover {
             background: #165751;
             transform: translateY(-3px);
         }
+
         .nav-button-form {
-            flex: 1 1 45%;
             margin: 0;
         }
-        .nav-button-form button.nav-button {
-        flex: 1 1 45%;
-        width: 100%;
-        padding: 1rem 0.8rem;
-        background: #1D665F;
-        color: #fff;
-        font-weight: 700;
-        font-size: 1rem;
-        border: none;
-        border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        cursor: pointer;
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        transition: 0.3s ease;
-    }
 
-    .nav-button-form button.nav-button:hover {
-        background: #165751;
-        transform: translateY(-3px);
-    }
+        /* KANAN: SLOGAN + GAMBAR */
+        .right-panel {
+            flex: 1 1 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            gap: 1.5rem;
+        }
 
+        .slogan {
+            color: #2A857D;
+            font-weight: 800;
+            font-size: 1.6rem;
+            line-height: 1.2;
+        }
 
+        .elderly-img {
+            width: 100%;
+            max-width: 420px;
+            height: auto;
+            object-fit: contain;
+        }
 
+        /* RESPONSIVE  */
+
+        /* tablet & kecil: kurangi padding supaya tidak mepet */
+        @media (max-width: 992px) {
+            .main-wrapper {
+                padding: 1.5rem;
+                gap: 1.5rem;
+            }
+
+            .slogan {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* mobile: stack atas-bawah */
+        @media (max-width: 768px) {
+            .main-wrapper {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .content-card,
+            .right-panel {
+                max-width: 100%;
+            }
+
+            .slogan {
+                font-size: 1.3rem;
+            }
+
+            .elderly-img {
+                max-width: 320px;
+            }
+        }
+
+        /* layar sangat kecil */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .main-wrapper {
+                padding: 1rem;
+            }
+
+            .content-card {
+                padding: 1.5rem;
+            }
+
+            .slogan {
+                font-size: 1.1rem;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="main-wrapper">
-        
+        <!-- KIRI: CARD -->
         <div class="content-card">
-            
             <img class="app-logo" src="{{ asset('images/HEALTHSYNC.png') }}" alt="HEALTHSYNC ELDERLY MONITORING">
 
             <div class="nav-buttons">
@@ -176,20 +181,19 @@
                 </a>
 
                 <form class="nav-button-form" action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="nav-button">Logout</button>
-            </form>
-
-
-                
+                    @csrf
+                    <button type="submit" class="nav-button">Logout</button>
+                </form>
             </div>
         </div>
 
-        {{-- SLOGAN DI ATAS GAMBAR LANSIA --}}
-        <div class="slogan-overlay">
-            Caring with heart, united in Wellness
+        <!-- KANAN: SLOGAN + GAMBAR -->
+        <div class="right-panel">
+            <div class="slogan">
+                Caring with heart, united in Wellness
+            </div>
+            <img src="{{ asset('images/Lansia.png') }}" class="elderly-img" alt="Lansia Bahagia">
         </div>
-        
     </div>
 </body>
 </html>

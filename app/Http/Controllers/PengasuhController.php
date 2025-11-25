@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pengasuh;
+use App\Models\Lansia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Models\JadwalLansia;
+use App\Models\JadwalKegiatan;
+
 
 class PengasuhController extends Controller
 {
@@ -64,6 +68,30 @@ class PengasuhController extends Controller
     {
         $pengasuh->delete();
         return redirect()->route('admin.pengasuh.index')->with('success', 'Data pengasuh berhasil dihapus.');
+    }
+
+    public function kegiatanIndex()
+    {
+        $allLansia = Lansia::all();
+        return view('pengasuh.kegiatan-lansia', compact('allLansia'));
+    }
+
+    public function kegiatanShow($id_lansia)
+    {
+        $allLansia = Lansia::all();
+        
+        // Cari lansia berdasarkan kode unik id_lansia
+        $lansia = Lansia::where('id_lansia', $id_lansia)->first();
+
+        $jadwals = collect();
+        if ($lansia) {
+            // Query menggunakan id (integer) bukan id_lansia (string)
+            $jadwals = JadwalKegiatan::where('lansia_id', $lansia->id)
+                ->orderBy('tanggal', 'desc')
+                ->get();
+        }
+
+        return view('pengasuh.kegiatan-lansia', compact('allLansia', 'lansia', 'jadwals'));
     }
 }
 

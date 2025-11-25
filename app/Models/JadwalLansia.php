@@ -22,6 +22,7 @@ class JadwalLansia extends Model
 
     public function lansia()
     {
-        return $this->belongsTo(Lansia::class);
+        return $this->belongsTo(Lansia::class, 'lansia_id');
     }
+    
 }
