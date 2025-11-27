@@ -243,6 +243,20 @@
         </div>
     </div>
 
+    <!-- JADWAL KEGIATAN LANSIA (baru) -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-title">JADWAL KEGIATAN LANSIA</span>
+            <span class="icon-plus" onclick="window.location.href='{{ route('pengasuh.kegiatan-lansia.index') }}'"></span>
+        </div>
+        <div class="divider"></div>
+        <div class="content-box">
+            <div style="padding: 0.5rem 0;">
+                <p style="color: #6B7280; font-size: 0.9rem;">Klik icon di atas untuk membuka halaman jadwal kegiatan lansia</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Update Kondisi Lansia Section -->
     <div class="section">
         <div class="section-header">
