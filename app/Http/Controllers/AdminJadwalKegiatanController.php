@@ -40,9 +40,30 @@ class AdminJadwalKegiatanController extends Controller
             'lokasi' => ['nullable','string'],
             'status' => ['nullable','string'],
             'catatan' => ['nullable','string'],
-        ]);
+    ], [
+            'tanggal.required' => 'Tanggal harus diisi.',
+            'tanggal.date' => 'Format tanggal tidak valid.',
+            'waktu.required' => 'Waktu harus diisi.',
+            'aktivitas.required' => 'Aktivitas harus diisi.',
+    ]);
+
+
         // Generate id_jadwal otomatis
-        $data['id_jadwal'] = 'JDW-' . date('Ymd') . '-' . str_pad(JadwalKegiatan::whereDate('created_at', today())->count() + 1, 3, '0', STR_PAD_LEFT);
+        $today = date('Ymd');
+
+        // Cari id_jadwal terakhir untuk hari ini
+        $last = JadwalKegiatan::where('id_jadwal', 'LIKE', "JDW-$today-%")
+                ->orderBy('id_jadwal', 'desc')
+                ->first();
+
+        // Ambil nomor urut terakhir
+        $nextNumber = $last
+            ? intval(substr($last->id_jadwal, -3)) + 1
+            : 1;
+
+        // Generate id_jadwal baru
+        $data['id_jadwal'] = "JDW-$today-" . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+
         
         if (isset($data['tanggal']) && isset($data['waktu'])) {
             $data['jadwal_pada'] = $data['tanggal'] . ' ' . $data['waktu'];
@@ -69,7 +90,13 @@ class AdminJadwalKegiatanController extends Controller
             'lokasi' => ['nullable','string'],
             'status' => ['nullable','string'],
             'catatan' => ['nullable','string'],
-        ]);
+    ], [
+            'tanggal.required' => 'Tanggal harus diisi.',
+            'tanggal.date' => 'Format tanggal tidak valid.',
+            'waktu.required' => 'Waktu harus diisi.',
+            'aktivitas.required' => 'Aktivitas harus diisi.',
+    ]);
+
         
         if (isset($data['tanggal']) && isset($data['waktu'])) {
             $data['jadwal_pada'] = $data['tanggal'] . ' ' . $data['waktu'];

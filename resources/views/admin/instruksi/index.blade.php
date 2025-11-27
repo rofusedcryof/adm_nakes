@@ -151,8 +151,6 @@
 
     <div class="wrap">
 
-        <!-- SIDEBAR SUDAH DIHAPUS -->
-
         <main class="content">
 
             <img class="logo-placeholder" src="{{ asset('images/HEALTHSYNC.png') }}" alt="HEALTHSYNC">
@@ -196,7 +194,6 @@
                             </td>
                             <td>{{ $it->medis->name ?? '-' }}</td>
                             <td style="display:flex; gap:0.3rem; align-items:center;">
-                                <a class="table-btn" href="{{ route('admin.instruksi.edit', $it) }}">Edit</a>
                                 <form method="POST" action="{{ route('admin.instruksi.destroy', $it) }}" 
                                       onsubmit="return confirm('Hapus instruksi obat ini?')" 
                                       style="display:inline;">

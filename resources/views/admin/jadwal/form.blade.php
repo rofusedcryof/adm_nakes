@@ -66,12 +66,13 @@
         }
     }
 </style>
-
+    <!-- from jadwal kegiatan -->
 <div class="content-card">
     <h2 style="color:#2A857D;font-size:1.5rem;margin-bottom:1.5rem;">
         {{ $mode==='create' ? 'Tambah' : 'Edit' }} Jadwal Kegiatan
     </h2>
 
+    <!-- tampilkan error validasi -->
     @if($errors->any())
         <div class="alert-error" style="padding:10px;background:#fbebeb;color:#D32F2F;border-radius:5px;margin-bottom:15px;">
             <strong>*Terjadi Kesalahan!</strong>
@@ -83,6 +84,7 @@
         </div>
     @endif
 
+    <!-- form mulai -->
     <form method="POST" action="{{ $mode==='create' ? route('admin.jadwal.store') : route('admin.jadwal.update', $item) }}">
         @csrf
         @if($mode==='edit') @method('PUT') @endif
@@ -103,7 +105,7 @@
         </select>
 
         <label for="tanggal">Tanggal</label>
-        <input id="tanggal" type="date" name="tanggal" value="{{ old('tanggal', $item->tanggal ?? '') }}" required />
+       <input id="tanggal" type="date" name="tanggal" value="{{ old('tanggal', optional($item->tanggal)->format('Y-m-d')) }}" required />
 
         <label for="waktu">Waktu</label>
         <input id="waktu" type="time" name="waktu" value="{{ old('waktu', $item->waktu ?? '') }}" required />
