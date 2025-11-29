@@ -4,292 +4,400 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HEALTH SYNC - Jadwal Kegiatan</title>
-    <style>
-        /* bacground halaman */
-        body { 
-            margin: 0; 
-            min-height: 100vh;
-            font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial; 
-            background: #f0f9f9; 
-            padding: 1.5rem;
-        }
 
-        /* Navbar atas */
-        .topbar { 
-            background: #2A857D; 
-            color: #fff; 
-            padding: 1.5rem 2.5rem; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            margin-bottom: 1.5rem;
-            border-radius: 15px; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+<style>
+    body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, sans-serif;
+        background: #f0f9f9;
+        padding: 1.5rem;
+    }
 
-        /* Brand di navbar */
-        .brand { 
-            font-weight: 900; 
-            letter-spacing: 1px; 
-            font-size: 1.5rem; 
-        }
+    /* NAVBAR */
+    .topbar {
+        background: #2A857D;
+        color: #fff;
+        padding: 1.5rem 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        border-radius: 15px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
 
-        /* Navigasi di navbar */
-        .nav { 
-            display: flex; 
-            gap: 2rem; 
-            align-items: center; 
-            justify-content: space-between; 
-            width: 100%; 
-        }
+    .brand { font-weight: 900; font-size: 1.5rem; }
+    .nav { display: flex; gap: 2rem; align-items: center; width: 100%; }
+    .nav-right { display: flex; align-items: center; gap: 1rem; margin-left: auto; }
+    .nav a { color: #fff; font-weight: 700; text-decoration: none; }
 
-        /* Bagian kanan navigasi */
-        .nav-right { 
-            display: flex; 
-            align-items: center; 
-            gap: 2rem; 
-            margin-left: auto; 
-        }
+    /* DROPDOWN FILTER */
+    .filter-dropdown { position: relative; display: inline-block; }
 
-        /* Link navigasi */
-        .nav a { 
-            color: #fff; 
-            text-decoration: none; 
-            font-weight: 700; 
-            font-size: 1rem; 
-        }
+    .filter-btn {
+        background: #1f2937;
+        color: white;
+        padding: .45rem .9rem;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+    }
 
-        /* Konten utama */
-        .wrap { 
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
+    .filter-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        background: #fff;
+        min-width: 230px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        border-radius: 10px;
+        overflow: hidden;
+        z-index: 20;
+    }
 
-        .content { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            background: #2A857D; 
-            border-radius: 15px; 
-            margin: 0 auto; 
-            padding: 2.5rem; 
-            width: 100%; 
-            min-height: calc(100vh - 150px); 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
-            position: relative; 
-            overflow: hidden;
-        }
+    .filter-dropdown:hover .filter-menu { display: block; }
 
-        /* Logo HEALTHSYNC di latar belakang */
-        .logo-placeholder { 
-            max-width: 300px; 
-            width: 100%; 
-            height: auto; 
-            filter: brightness(1.1); 
-            opacity: 0.6; 
-        }
+    .filter-menu button {
+        width: 100%;
+        background: none;
+        border: none;
+        padding: .8rem 1rem;
+        text-align: left;
+        font-weight: 600;
+        cursor: pointer;
+        border-bottom: 1px solid #eee;
+    }
 
-        /* Kartu overlay untuk tabel */
-        .card-overlay {
-            position: absolute; 
-            top: 30px;
-            left: 30px;
-            right: 30px;
-            max-height: calc(100% - 60px);
-            overflow-y: auto; 
-            background: white; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,.2);
-            padding: 1.5rem; 
-            z-index: 10; 
-            width: auto;
-        }
+    .filter-menu button:hover {
+        background: #2A857D;
+        color: #fff;
+    }
 
-        /* Header judul */
-        .card-header {
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 1rem;
-        }
+    /* POPUP GLOBAL */
+    .popup {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.45);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 200;
+    }
 
-        .btn-action {
-            padding: .45rem .9rem;
-            border-radius: 6px;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: .85rem;
-            text-decoration: none;
-        }
+    .popup-box {
+        background: white;
+        padding: 1.8rem;
+        width: 330px;
+        border-radius: 12px;
+        box-shadow: 0px 4px 15px rgba(0,0,0,0.25);
+        text-align: center;
+    }
 
-        /* Tombol tambah */
-        .btn-tambah { background: #2A857D; }
+    .popup-box input {
+        width: 100%;
+        padding: .6rem;
+        margin-top: 1rem;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+    }
 
-        /* Tabel jadwal */
-        table { 
-            width:100%; 
-            border-collapse:collapse; 
-            margin-top:1rem; 
-            min-width:700px; 
-        }
+    .popup-btn {
+        width: 100%;
+        margin-top: 1rem;
+        padding: .6rem;
+        background: #2A857D;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+    }
 
-        th, 
-        td { 
-            padding:.55rem .7rem; 
-            border-bottom:1px solid #e5e7eb; 
-            text-align:left; 
-            font-size:.9rem; 
-        }
+    .popup-close {
+        width: 100%;
+        margin-top: .5rem;
+        padding: .6rem;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+    }
 
-        th { 
-            background:#e5f3f3; 
-            font-weight:800; 
-        }
+    /* PAGE WRAPPER */
+    .wrap { display: flex; justify-content: center; }
+    .content {
+        background: #2A857D;
+        border-radius: 15px;
+        padding: 2.5rem;
+        width: 100%;
+        position: relative;
+        min-height: calc(100vh - 150px);
+    }
 
-        form { 
-            display:inline; 
-        }
+    .card-overlay {
+        position: absolute;
+        top: 30px;
+        left: 30px;
+        right: 30px;
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
 
-        /* Kontainer tabel untuk overflow */
-        .table-container {
-            width: 100%;
-            overflow-x: auto;
-        }
+    .card-header {
+        display: flex; justify-content: space-between; align-items: center;
+    }
 
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
+    .btn-tambah {
+        background: #2A857D;
+        padding: .5rem .9rem;
+        border-radius: 6px;
+        font-weight: bold;
+        color: white;
+        text-decoration: none;
+    }
 
-        .action-buttons a {
-            text-decoration: none;
-        }
+    /* TABLE */
+    table { 
+        width: 100%; 
+        margin-top: 1rem; 
+        border-collapse: collapse; 
+    }
 
-        .btn-edit, .btn-hapus {
-            padding: .45rem .9rem;
-            font-size: .85rem;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            color: white;
-            flex: 1;               
-            text-align: center;
-            display: inline-block;
-        }
+    th, td {
+        padding: .8rem;
+        border-bottom: 1px solid #ddd;
+        text-align: center;      /* 🔥 AGAR SIMETRIS */
+        vertical-align: middle;
+    }
 
-        .btn-edit { background: #1f2937; }
-        .btn-hapus { background: #dc3545; }
+    th {
+        background: #e5f3f3;
+        font-weight: bold;
+    }
 
-        /* Responsif untuk layar kecil */
-        @media (max-width: 600px) {
-            .action-buttons {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+    td:nth-child(5) {
+    text-align: center;     
+    padding: 0 10px;        
+    white-space: nowrap;    
 
-            .btn-edit,
-            .btn-hapus {
-                width: 100%;
-                max-width: 120px;
-                flex: none;
-            }
-        }
-    </style>
+    }
+
+    .btn-edit, .btn-hapus {
+        padding: .4rem .7rem;
+        font-size: .85rem;
+        border-radius: 6px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        color: white;
+    }
+
+    .btn-edit { background: #1f2937; }
+    .btn-hapus { background: #dc3545; }
+</style>
+
 </head>
 
 <body>
 
-    <!-- Navbar atas -->
-    <div class="topbar">
-        <div class="nav">
-            <div class="brand">HEALTH SYNC</div>
+<!-- NAVBAR -->
+<div class="topbar">
+    <div class="nav">
+        <div class="brand">HEALTH SYNC</div>
 
-            <!-- ke dasboard admin -->
-            <div class="nav-right">
-                <a href="{{ route('admin.dashboard') }}">HOME</a>
+        <div class="nav-right">
+
+            <div class="filter-dropdown">
+                <button class="filter-btn">Filter ▼</button>
+                <div class="filter-menu">
+                    <button onclick="window.location='{{ route('admin.jadwal.home') }}'">Tampilkan Semua Data</button>
+                    <button onclick="openFilter('id', 'Cari berdasarkan ID Jadwal', 'Masukkan ID Jadwal...')">ID Jadwal</button>
+                    <button onclick="openFilter('lansia', 'Cari berdasarkan Nama Lansia', 'Masukkan nama lansia...')">Nama Lansia</button>
+                    <button onclick="openFilter('tanggal', 'Cari berdasarkan Tanggal', 'Pilih tanggal...')">Tanggal</button>
+                    <button onclick="openFilter('aktivitas', 'Cari berdasarkan Aktivitas', 'Masukkan aktivitas...')">Berdasarkan Aktivitas</button>
+
+                    
+                </div>
             </div>
+            <a href="{{ route('admin.dashboard') }}">HOME</a>
         </div>
     </div>
+</div>
 
-    <div class="wrap">
-        <main class="content">
+<!-- POPUP FILTER -->
+<div id="filter-popup" class="popup">
+    <div class="popup-box">
+        <h3 id="popup-title">Filter</h3>
 
-            <!-- logi di latar belakang -->
-            <img class="logo-placeholder" src="{{ asset('images/HEALTHSYNC.png') }}" alt="HEALTHSYNC">
+        <form method="GET" action="{{ route('admin.jadwal.home') }}">
+            <input type="hidden" name="filter" id="filter-type">
+            <input type="text" id="filter-input" name="value" placeholder="Masukkan pencarian..." required>
+            <button type="submit" class="popup-btn">Cari</button>
+        </form>
 
-            <div class="card-overlay">
-                
-                <!-- judul pada halaman -->
-                <div class="card-header">
-                    <h2 style="margin:0;">Jadwal Kegiatan Lansia</h2>
-                    <a class="btn-action btn-tambah" href="{{ route('admin.jadwal.create') }}">Tambah</a>
-                </div>
+        <button class="popup-close" onclick="closePopup()">Batal</button>
+    </div>
+</div>
 
-                <!--tabel jadwal kegiatan -->
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID Jadwal</th>
-                                <th>Lansia</th>
-                                <th>Tanggal</th>
-                                <th>Waktu</th>
-                                <th>Aktivitas</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
+<!-- POPUP KONFIRMASI -->
+<div id="confirm-popup" class="popup">
+    <div class="popup-box">
+        <h3 id="confirm-title">Konfirmasi</h3>
 
-                        <tbody>
-                            <!-- looping data jadwal -->
-                            @forelse ($items as $item)
-                                <tr>
-                                    <td>{{ $item->id_jadwal }}</td>
-                                    <td>{{ $item->lansia->nama_lansia ?? 'N/A' }}</td>
-                                    <td>{{ $item->tanggal?->format('d-m-Y') ?? '-' }}</td>
-                                    <td>{{ $item->waktu ?? '-' }}</td>
-                                    <td>{{ $item->aktivitas }}</td>
+        <button id="confirm-yes" class="popup-btn">Ya</button>
+        <button onclick="closeConfirm()" class="popup-close">Tidak</button>
+    </div>
+</div>
 
-                                    <td>
-                                        <div class="action-buttons">
-                                            <!-- tombol edit dan hapus -->
-                                            <a href="{{ route('admin.jadwal.edit', $item) }}" class="btn-edit">
-                                                Edit
-                                            </a>
+<!-- POPUP SUKSES -->
+<div id="success-popup" class="popup" style="display:none;">
+    <div class="popup-box">
+        <h3 id="success-title" style="margin-bottom:20px;">Berhasil!</h3>
+        <button onclick="closeSuccess()" class="popup-btn" style="background:#2A857D;">OK</button>
+    </div>
+</div>
 
-                                            <form method="POST" action="{{ route('admin.jadwal.destroy', $item) }}" 
-                                                onsubmit="return confirm('Hapus jadwal ini?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn-hapus">Hapus</button>
-                                            </form>
+<!-- CONTENT -->
+<div class="wrap">
+    <main class="content">
 
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="6">Belum ada jadwal kegiatan.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+        <div class="card-overlay">
 
-                <div style="margin-top:1rem;">
-                    {{ $items->links() }}
-                </div>
-
+            <div class="card-header">
+                <h2>Jadwal Kegiatan Lansia</h2>
+                <a class="btn-tambah" href="{{ route('admin.jadwal.create') }}">Tambah</a>
             </div>
 
-        </main>
-    </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 18%;">ID Jadwal</th>
+                        <th style="width: 18%;">Lansia</th>
+                        <th style="width: 15%;">Tanggal</th>
+                        <th style="width: 15%;">Waktu</th>
+                        <th style="width: 22%;">Aktivitas</th>
+                        <th style="width: 12%;">Aksi</th>
+                    </tr>
+                </thead>
+
+             <tbody>
+                @forelse ($items as $item)
+                <tr>
+                    <td>{{ $item->id_jadwal }}</td>
+                    <td>{{ $item->lansia->nama_lansia ?? '-' }}</td>
+                    <td>{{ $item->tanggal?->format('d-m-Y') }}</td>
+                    <td>{{ $item->waktu }}</td>
+
+                    <!-- PERBAIKAN DI SINI -->
+                    <td class="col-aktivitas">{{ $item->aktivitas }}</td>
+
+                    <td>
+                        <button 
+                            class="btn-edit"
+                            onclick="confirmEdit('{{ route('admin.jadwal.edit', $item) }}')">
+                            Edit
+                        </button>
+
+                        <form method="POST" 
+                            action="{{ route('admin.jadwal.destroy', $item) }}"
+                            style="display:inline;"
+                            onsubmit="event.preventDefault(); confirmDelete(this);">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn-hapus">Hapus</button>
+                        </form>
+                    </td>
+                </tr>
+                @empty
+                <tr><td colspan="6">Belum ada data.</td></tr>
+                @endforelse
+                </tbody>
+
+            </table>
+
+        </div>
+    </main>
+</div>
+
+<!-- JAVASCRIPT -->
+<script>
+/* FILTER POPUP */
+function openFilter(type, title, placeholder) {
+    document.getElementById('filter-type').value = type;
+    document.getElementById('popup-title').innerText = title;
+    document.getElementById('filter-input').placeholder = placeholder;
+
+    if (type === "tanggal") {
+        document.getElementById('filter-input').type = "date";
+    } else {
+        document.getElementById('filter-input').type = "text";
+    }
+
+    document.getElementById('filter-popup').style.display = "flex";
+}
+
+function closePopup() {
+    document.getElementById('filter-popup').style.display = "none";
+}
+
+
+/* KONFIRMASI EDIT & DELETE */
+let editUrl = "";
+let deleteForm = null;
+
+function confirmEdit(url) {
+    editUrl = url;
+    document.getElementById('confirm-title').innerText =
+        "Apakah Anda ingin mengedit jadwal ini?";
+    document.getElementById('confirm-popup').style.display = "flex";
+
+    document.getElementById('confirm-yes').onclick = function () {
+        window.location = editUrl;
+    };
+}
+
+function confirmDelete(form) {
+    deleteForm = form;
+    document.getElementById('confirm-title').innerText =
+        "Apakah Anda ingin menghapus jadwal ini?";
+    document.getElementById('confirm-popup').style.display = "flex";
+
+    document.getElementById('confirm-yes').onclick = function () {
+        deleteForm.submit();
+    };
+}
+
+function closeConfirm() {
+    document.getElementById('confirm-popup').style.display = "none";
+}
+
+
+/* SUCCESS POPUP */
+function showSuccess(message) {
+    document.getElementById('success-title').innerText = message;
+    document.getElementById('success-popup').style.display = "flex";
+}
+
+function closeSuccess() {
+    document.getElementById('success-popup').style.display = "none";
+}
+</script>
+
+@if(session('success'))
+<script>
+window.onload = function() {
+    showSuccess("{{ session('success') }}");
+};
+</script>
+@endif
 
 </body>
 </html>
+
