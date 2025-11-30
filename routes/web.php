@@ -21,7 +21,7 @@ Route::get('/', function () {
         $role = auth()->user()->role;
         return match ($role) {
             'admin' => redirect()->route('admin.dashboard'),
-            'tenaga_medis', 'nakes' => redirect()->route('medis.dashboard'), // Support both 'tenaga_medis' and 'nakes'
+            'tenaga_medis', 'nakes' => redirect()->route('medis.dashboard'),
             'pengasuh' => redirect()->route('pengasuh.dashboard'),
             'keluarga', 'keluarga' => redirect()->route('keluarga.dashboard'),
             
@@ -79,6 +79,7 @@ Route::prefix('admin')
             ->names([
                 'index' => 'jadwal.home',
             ]);
+
         Route::resource('/instruksi', AdminInstruksiObatController::class)->except(['show']);
         Route::resource('/lansia', AdminLansiaController::class)->only(['index','create','store']);
     });
@@ -118,13 +119,21 @@ Route::prefix('pengasuh')
     ->middleware(['auth'])
     ->as('pengasuh.')
     ->group(function () {
+
+        // dashboard
         Route::get('/', [PengasuhDashboardController::class, 'dashboard'])->name('dashboard');
+
         Route::get('/riwayat', [PengasuhDashboardController::class, 'riwayat'])->name('riwayat');
+
         Route::get('/update-kondisi', [PengasuhDashboardController::class, 'createUpdate'])->name('update-kondisi');
         Route::post('/update-kondisi', [PengasuhDashboardController::class, 'storeUpdate'])->name('update-kondisi.store');
+
         Route::get('/kondisi-darurat', [PengasuhDashboardController::class, 'kondisiDarurat'])->name('kondisi-darurat');
+
         Route::post('/kirim-notifikasi-darurat', [PengasuhDashboardController::class, 'kirimNotifikasiDarurat'])->name('kirim-notifikasi-darurat');
+
         Route::post('/kirim-notifikasi-darurat-langsung', [PengasuhDashboardController::class, 'kirimNotifikasiDaruratLangsung'])->name('kirim-notifikasi-darurat-langsung');
-        Route::get('kegiatan-lansia', [PengasuhController::class, 'kegiatanIndex'])->name('kegiatan-lansia.index');
-        Route::get('kegiatan-lansia/{id_lansia}', [PengasuhController::class, 'kegiatanShow'])->name('kegiatan-lansia.show');
+
+        Route::get('/kegiatan-lansia', [PengasuhController::class, 'kegiatanIndex'])->name('kegiatan-lansia.index');
+        Route::get('/kegiatan-lansia/{id_lansia}', [PengasuhController::class, 'kegiatanShow'])->name('kegiatan-lansia.show');
     });
