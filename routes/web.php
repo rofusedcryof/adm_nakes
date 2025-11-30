@@ -10,6 +10,8 @@ use App\Http\Controllers\MedisRiwayatController;
 use App\Http\Controllers\PengasuhController;
 use App\Http\Controllers\PengasuhDashboardController;
 use App\Http\Controllers\PushNotificationController;
+use App\Http\Controllers\AdminLansiaController;
+use App\Http\Controllers\KeluargaPortalController;
 
 // ============================================================
 // 🔹 Default route — arahkan otomatis tergantung login
@@ -21,7 +23,8 @@ Route::get('/', function () {
             'admin' => redirect()->route('admin.dashboard'),
             'tenaga_medis', 'nakes' => redirect()->route('medis.dashboard'), // Support both 'tenaga_medis' and 'nakes'
             'pengasuh' => redirect()->route('pengasuh.dashboard'),
-            default => redirect()->route('dashboard'),
+            'keluarga', 'keluarga' => redirect()->route('keluarga.dashboard'),
+            
         };
     }
     return redirect()->route('login');
@@ -77,6 +80,7 @@ Route::prefix('admin')
                 'index' => 'jadwal.home',
             ]);
         Route::resource('/instruksi', AdminInstruksiObatController::class)->except(['show']);
+        Route::resource('/lansia', AdminLansiaController::class)->only(['index','create','store']);
     });
 
 // ============================================================
@@ -90,6 +94,21 @@ Route::prefix('medis')
         Route::get('/riwayat', [MedisRiwayatController::class, 'index'])->name('riwayat');
 
         Route::resource('/instruksi', MedisInstruksiObatController::class)->except(['show']);
+    });
+
+// ============================================================
+// 🔹 KELUARGA ROUTES
+// ============================================================
+Route::prefix('keluarga')
+    ->middleware(['auth'])
+    ->as('keluarga.')
+    ->group(function () {
+        Route::get('/', [KeluargaPortalController::class, 'dashboard'])->name('dashboard');
+        Route::get('/riwayat', [KeluargaPortalController::class, 'riwayat'])->name('riwayat');
+        Route::get('/jadwal', [KeluargaPortalController::class, 'jadwal'])->name('jadwal');
+        Route::get('/notifikasi', [KeluargaPortalController::class, 'notifikasi'])->name('notifikasi');
+        Route::get('/profil', [KeluargaPortalController::class, 'profil'])->name('profil');
+        Route::post('/profil/ubah-sandi', [KeluargaPortalController::class, 'ubahSandi'])->name('profil.ubah-sandi');
     });
 
 // ============================================================

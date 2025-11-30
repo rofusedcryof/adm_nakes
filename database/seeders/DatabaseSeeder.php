@@ -51,7 +51,17 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Keluarga',
                 'password' => Hash::make('123456'),
-                'role' => 'user',
+                'role' => 'keluarga',
+            ]
+
+        
+        );
+        $keluargaUser = User::updateOrCreate(
+            ['email' => 'keluargaSari@gmail.com'],
+            [
+                'name' => 'Keluarga',
+                'password' => Hash::make('54321'),
+                'role' => 'keluarga',
             ]
         );
         $pengasuh = User::updateOrCreate(
@@ -117,16 +127,13 @@ class DatabaseSeeder extends Seeder
                 'keluarga_user_id' => $keluargaUser->id,
                 'lansia_id' => $l1->id,
             ], ['hubungan' => 'anak']);
-            // Hubungkan keluarga dengan l2 juga
-            DB::table('keluarga_lansia')->updateOrInsert([
-                'keluarga_user_id' => $keluargaUser->id,
-                'lansia_id' => $l2->id,
-            ], ['hubungan' => 'anak']);
+            // Setiap keluarga hanya terkait ke satu lansia (contoh: l1)
 
-            // Create Keluarga record
+            // Create Keluarga record terkait akun user keluarga
             Keluarga::updateOrCreate(
-                ['email' => 'keluarga@example.com'],
+                ['user_id' => $keluargaUser->id],
                 [
+                    'email' => 'keluarga@example.com',
                     'nama' => 'Keluarga',
                     'alamat' => 'Jl. Melati No. 10',
                     'no_telepon' => '08123456789',
@@ -134,12 +141,24 @@ class DatabaseSeeder extends Seeder
                     'lansia_id' => $l1->id,
                 ]
             );
+            Keluarga::updateOrCreate(
+                ['user_id' => $keluargaUser->id],
+                [
+                    'email' => 'keluargaSari@gmail.com',
+                    'nama' => 'Keluarga',
+                    'alamat' => 'Jl. Melati No. 10',
+                    'no_telepon' => '08123456789',
+                    'hubungan' => 'anak',
+                    'lansia_id' => $l2->id,
+                ]
+            );
         }
 
-        // Create Pengasuh
-        $pengasuh = Pengasuh::updateOrCreate(
-            ['email' => 'pengasuh@example.com'],
+        // Create Pengasuh record terkait akun user pengasuh
+        $pengasuhModel = Pengasuh::updateOrCreate(
+            ['user_id' => $pengasuh->id],
             [
+                'email' => 'pengasuh@example.com',
                 'nama' => 'Siti Nurhaliza',
                 'alamat' => 'Jl. Anggrek No. 5',
                 'no_telepon' => '08123456788',
@@ -178,6 +197,8 @@ class DatabaseSeeder extends Seeder
                 'lokasi' => 'Puskesmas 1',
                 'jadwal_pada' => now()->addDays(7)->setTime(8,30,0),
             ]);
+
+            // Jadwal kegiatan untuk lansia dibuat oleh admin, tidak di-seed untuk lansia lain
         }
 
         // Create JadwalLansia

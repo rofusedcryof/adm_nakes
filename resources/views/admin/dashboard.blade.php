@@ -180,6 +180,10 @@
                     Instruksi Obat
                 </a>
 
+                <a class="nav-button" href="{{ route('admin.lansia.index') }}">
+                    Input Lansia
+                </a>
+
                 <form class="nav-button-form" action="{{ route('logout') }}" method="POST">
                     @csrf
                     <button type="submit" class="nav-button">Logout</button>
