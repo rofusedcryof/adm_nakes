@@ -13,7 +13,7 @@ class Pengasuh extends Model
     protected $table = 'pengasuh';
 
     protected $fillable = [
-        'nama', 'alamat', 'no_telepon', 'email', 'password',
+        'nama', 'alamat', 'no_telepon', 'email', 'password', 'user_id',
     ];
 
     protected $hidden = [
@@ -23,5 +23,10 @@ class Pengasuh extends Model
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = Hash::make($value);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
