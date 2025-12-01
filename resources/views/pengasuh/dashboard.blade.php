@@ -248,7 +248,7 @@
         </a>
 
         <!-- NOTIFIKASI -->
-        <a href="#" class="nav-item">
+        <a href="{{ route('pengasuh.notifikasi') }}" class="nav-item">
             <svg width="22" height="22" viewBox="0 0 24 24" stroke="#2A857D" fill="none" stroke-width="2">
                 <path d="M15 17h5l-1.4-1.4c-.4-.8-.6-1.2-.6-1.6V11c0-3.3-2.2-6-5-6s-5 2.7-5 6v3c0 .4-.2.8-.6 1.6L6 17h5"/>
                 <path d="M14 17v1a2 2 0 1 1-4 0v-1"/>
@@ -257,7 +257,7 @@
         </a>
 
         <!-- PROFILE -->
-        <a href="#" class="nav-item">
+        <a href="{{ route('pengasuh.profil') }}" class="nav-item">
             <svg width="22" height="22" viewBox="0 0 24 24" stroke="#2A857D" fill="none" stroke-width="2">
                 <circle cx="12" cy="8" r="4"/>
                 <path d="M6 20v-1c0-3.3 2.7-5 6-5s6 1.7 6 5v1"/>

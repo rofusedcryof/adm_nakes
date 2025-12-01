@@ -63,16 +63,16 @@
         </div>
 
         <div class="card">
-            <h3>Akun Keluarga</h3>
+            <h3>Akun Keluarga (opsional)</h3>
             <div class="grid">
                 <div>
                     <label>Nama</label>
-                    <input name="keluarga_nama" value="{{ old('keluarga_nama') }}" required>
+                    <input name="keluarga_nama" value="{{ old('keluarga_nama') }}">
                     @error('keluarga_nama')<div class="error">{{ $message }}</div>@enderror
                 </div>
                 <div>
                     <label>Email</label>
-                    <input type="email" name="keluarga_email" value="{{ old('keluarga_email') }}" required>
+                    <input type="email" name="keluarga_email" value="{{ old('keluarga_email') }}">
                     @error('keluarga_email')<div class="error">{{ $message }}</div>@enderror
                 </div>
                 <div>

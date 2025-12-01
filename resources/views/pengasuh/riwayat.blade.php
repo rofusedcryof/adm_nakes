@@ -288,12 +288,12 @@
         </a>
 
         <!-- NOTIFIKASI -->
-        <a href="#" class="nav-item">
+        <a href="{{ route('pengasuh.notifikasi') }}" class="nav-item">
             <span class="nav-icon icon-bell"></span><br>Notifikasi
         </a>
 
         <!-- PROFILE -->
-        <a href="#" class="nav-item">
+        <a href="{{ route('pengasuh.profil') }}" class="nav-item">
             <span class="nav-icon icon-user"></span><br>Profile
         </a>
 

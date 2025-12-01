@@ -7,6 +7,7 @@ use App\Models\RiwayatKondisi;
 use App\Models\Notifikasi;
 use App\Models\PushSubscription;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class PengasuhDashboardController extends Controller
 {
@@ -212,5 +213,39 @@ class PengasuhDashboardController extends Controller
 
         return redirect()->route('pengasuh.dashboard')
             ->with('success', "Notifikasi darurat dikirim ke {$jumlahNotifikasi} penerima.");
+    }
+
+    public function notifikasi()
+    {
+        $items = Notifikasi::where('user_id', auth()->id())
+            ->orderByDesc('created_at')
+            ->get();
+        return view('pengasuh.notifikasi', compact('items'));
+    }
+
+    public function profil()
+    {
+        $user = auth()->user();
+        return view('pengasuh.profil', compact('user'));
+    }
+
+    public function ubahSandi(Request $request)
+    {
+        $user = auth()->user();
+
+        $validated = $request->validate([
+            'password_lama' => 'required',
+            'password_baru' => 'required|min:6|confirmed',
+        ]);
+
+        if (!Hash::check($validated['password_lama'], $user->password)) {
+            return back()->withErrors(['password_lama' => 'Kata sandi lama tidak sesuai.']);
+        }
+
+        $user->update([
+            'password' => bcrypt($validated['password_baru']),
+        ]);
+
+        return redirect()->route('pengasuh.profil')->with('success', 'Kata sandi berhasil diubah.');
     }
 }

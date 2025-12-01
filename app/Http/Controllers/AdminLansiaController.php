@@ -33,45 +33,47 @@ class AdminLansiaController extends Controller
         ]);
 
         $validatedFamily = $request->validate([
-            'keluarga_nama' => 'required|string|max:255',
-            'keluarga_email' => 'required|email|unique:users,email',
+            'keluarga_nama' => 'nullable|string|max:255|required_with:keluarga_email',
+            'keluarga_email' => 'nullable|email|unique:users,email',
             'keluarga_no_telepon' => 'nullable|string|max:20',
             'keluarga_alamat' => 'nullable|string',
             'keluarga_hubungan' => 'nullable|string|max:50',
             'keluarga_password' => 'nullable|string|min:6',
         ]);
 
-        DB::transaction(function () use ($validatedLansia, $validatedFamily) {
+        DB::transaction(function () use ($validatedLansia, $validatedFamily, $request) {
             $lansia = Lansia::create($validatedLansia);
 
-            $user = User::create([
-                'name' => $validatedFamily['keluarga_nama'],
-                'email' => $validatedFamily['keluarga_email'],
-                'password' => Hash::make($validatedFamily['keluarga_password'] ?? '123456'),
-                'role' => 'keluarga',
-            ]);
-
-            Keluarga::updateOrCreate(
-                ['user_id' => $user->id],
-                [
+            if (!empty($validatedFamily['keluarga_email'])) {
+                $user = User::create([
+                    'name' => $validatedFamily['keluarga_nama'],
                     'email' => $validatedFamily['keluarga_email'],
-                    'nama' => $validatedFamily['keluarga_nama'],
-                    'alamat' => $validatedFamily['keluarga_alamat'] ?? '',
-                    'no_telepon' => $validatedFamily['keluarga_no_telepon'] ?? '',
-                    'hubungan' => $validatedFamily['keluarga_hubungan'] ?? '',
-                    'lansia_id' => $lansia->id,
-                ]
-            );
+                    'password' => Hash::make($validatedFamily['keluarga_password'] ?? '123456'),
+                    'role' => 'keluarga',
+                ]);
 
-            DB::table('keluarga_lansia')->updateOrInsert([
-                'keluarga_user_id' => $user->id,
-                'lansia_id' => $lansia->id,
-            ], [
-                'hubungan' => $validatedFamily['keluarga_hubungan'] ?? '',
-            ]);
+                Keluarga::updateOrCreate(
+                    ['user_id' => $user->id],
+                    [
+                        'email' => $validatedFamily['keluarga_email'],
+                        'nama' => $validatedFamily['keluarga_nama'],
+                        'alamat' => $validatedFamily['keluarga_alamat'] ?? '',
+                        'no_telepon' => $validatedFamily['keluarga_no_telepon'] ?? '',
+                        'hubungan' => $validatedFamily['keluarga_hubungan'] ?? '',
+                        'lansia_id' => $lansia->id,
+                    ]
+                );
+
+                DB::table('keluarga_lansia')->updateOrInsert([
+                    'keluarga_user_id' => $user->id,
+                    'lansia_id' => $lansia->id,
+                ], [
+                    'hubungan' => $validatedFamily['keluarga_hubungan'] ?? '',
+                ]);
+            }
         });
 
-        return redirect()->route('admin.lansia.index')->with('success', 'Lansia dan akun keluarga berhasil dibuat');
+        $msg = !empty($validatedFamily['keluarga_email']) ? 'Lansia dan akun keluarga berhasil dibuat' : 'Lansia berhasil dibuat';
+        return redirect()->route('admin.lansia.index')->with('success', $msg);
     }
 }
-

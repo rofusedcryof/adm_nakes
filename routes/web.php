@@ -136,4 +136,8 @@ Route::prefix('pengasuh')
 
         Route::get('/kegiatan-lansia', [PengasuhController::class, 'kegiatanIndex'])->name('kegiatan-lansia.index');
         Route::get('/kegiatan-lansia/{id_lansia}', [PengasuhController::class, 'kegiatanShow'])->name('kegiatan-lansia.show');
+
+        Route::get('/notifikasi', [PengasuhDashboardController::class, 'notifikasi'])->name('notifikasi');
+        Route::get('/profil', [PengasuhDashboardController::class, 'profil'])->name('profil');
+        Route::post('/profil/ubah-sandi', [PengasuhDashboardController::class, 'ubahSandi'])->name('profil.ubah-sandi');
     });
