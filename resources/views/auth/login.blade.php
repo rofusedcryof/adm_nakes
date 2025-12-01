@@ -194,13 +194,11 @@
             <div class="form-group">
                 <label for="email">Email</label>
                 <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus>
-                @error('email')<div class="error">{{ $message }}</div>@enderror
             </div>
 
             <div class="form-group">
                 <label for="password">Kata Sandi</label>
                 <input id="password" type="password" name="password" required>
-                @error('password')<div class="error">{{ $message }}</div>@enderror
             </div>
 
             <button type="submit" class="btn">Masuk</button>
@@ -219,21 +217,20 @@
             });
         });
     </script>
+
     <script src="{{ asset('/sw.js') }}"></script>
     <script>
    if ("serviceWorker" in navigator) {
-      // Register a service worker hosted at the root of the
-      // site using the default scope.
       navigator.serviceWorker.register("/sw.js").then(
       (registration) => {
-         console.log("Service worker registration succeeded:", registration);
+         console.log("Service worker berhasil didaftarkan : ", registration);
       },
       (error) => {
-         console.error(`Service worker registration failed: ${error}`);
+         console.error(`Service worker gagal didaftarkan: ${error}`);
       },
     );
   } else {
-     console.error("Service workers are not supported.");
+     console.error("Service workers tidak didukung");
   }
 </script>
 

@@ -270,11 +270,11 @@
             <span class="icon-home"></span>
             <span style="font-size: 0.75rem;">Home</span>
         </a>
-        <a href="#" class="nav-item">
+        <a href="{{ route('pengasuh.notifikasi') }}" class="nav-item">
             <span class="icon-bell"></span>
             <span style="font-size: 0.75rem;">Notifikasi</span>
         </a>
-        <a href="#" class="nav-item">
+        <a href="{{ route('pengasuh.profil') }}" class="nav-item">
             <span class="icon-profile"></span>
             <span style="font-size: 0.75rem;">Profile</span>
         </a>

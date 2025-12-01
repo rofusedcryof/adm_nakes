@@ -170,7 +170,11 @@ return [
          * Application Service Providers...
          */
         App\Providers\AppServiceProvider::class,
-        Ladumor\LaravelPwa\PWAServiceProvider::class,
+        ...(
+            class_exists(\Ladumor\LaravelPwa\PWAServiceProvider::class)
+            ? [\Ladumor\LaravelPwa\PWAServiceProvider::class]
+            : []
+        ),
     ],
 
     /*
@@ -223,7 +227,11 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'LaravelPwa' => \Ladumor\LaravelPwa\LaravelPwa::class,
+        ...(
+            class_exists(\Ladumor\LaravelPwa\LaravelPwa::class)
+            ? ['LaravelPwa' => \Ladumor\LaravelPwa\LaravelPwa::class]
+            : []
+        ),
     ],
 
 ];
