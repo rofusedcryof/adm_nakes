@@ -11,87 +11,164 @@ use Illuminate\Support\Facades\Auth;
 
 class KeluargaPortalController extends Controller
 {
+    /* ==========================================
+       DASHBOARD
+       ========================================== */
     public function dashboard()
     {
         $user = Auth::user();
-
         $lansiaList = $user->lansiaKeluarga()->orderBy('nama_lansia')->get();
 
-        $riwayatTerbaru = collect();
+        $riwayatTerbaru  = collect();
         $jadwalMendatang = collect();
 
         foreach ($lansiaList as $l) {
-            $riwayat = $l->riwayatKondisi()->orderByDesc('diukur_pada')->limit(3)->get();
-            $riwayatTerbaru = $riwayatTerbaru->concat($riwayat->map(function ($r) use ($l) {
-                $r->lansia = $l;
-                return $r;
-            }));
 
-            $jadwal = $l->jadwalKegiatan()->orderBy('tanggal')->limit(5)->get();
-            $jadwalMendatang = $jadwalMendatang->concat($jadwal->map(function ($j) use ($l) {
+            // Riwayat terbaru (3 data per lansia)
+            $riwayat = $l->riwayatKondisi()
+                ->orderByDesc('diukur_pada')
+                ->limit(3)
+                ->get();
+
+            foreach ($riwayat as $r) {
+                $r->lansia = $l;
+                $riwayatTerbaru->push($r);
+            }
+
+            // Jadwal mendatang (3 data per lansia)
+            $jadwal = $l->jadwalKegiatan()
+                ->orderBy('tanggal')
+                ->limit(3)
+                ->get();
+
+            foreach ($jadwal as $j) {
                 $j->lansia = $l;
-                return $j;
-            }));
+                $jadwalMendatang->push($j);
+            }
         }
 
-        return view('keluarga.dashboard', [
-            'lansiaList' => $lansiaList,
-            'riwayatTerbaru' => $riwayatTerbaru,
-            'jadwalMendatang' => $jadwalMendatang,
-        ]);
+        return view('keluarga.dashboard', compact(
+            'lansiaList',
+            'riwayatTerbaru',
+            'jadwalMendatang'
+        ));
     }
 
+    /* ==========================================
+       RIWAYAT KONDISI
+       ========================================== */
     public function riwayat(Request $request)
     {
-        $user = Auth::user();
+        $user       = Auth::user();
         $lansiaList = $user->lansiaKeluarga()->orderBy('nama_lansia')->get();
-        $selectedId = $request->get('lansia_id') ?: ($lansiaList->first()->id ?? null);
-        if ($selectedId && !$lansiaList->contains('id', $selectedId)) {
-            $selectedId = null;
-        }
 
-        $riwayat = collect();
-        if ($selectedId) {
+        $selectedId = $request->get('lansia_id', 'all');
+
+        if ($selectedId === 'all') {
+
+            $riwayat = RiwayatKondisi::whereIn('lansia_id', $lansiaList->pluck('id'))
+                ->with('lansia')
+                ->orderByDesc('diukur_pada')
+                ->get();
+
+        } else {
+
+            if (!$lansiaList->contains('id', $selectedId)) {
+                $selectedId = 'all';
+            }
+
             $riwayat = RiwayatKondisi::where('lansia_id', $selectedId)
+                ->with('lansia')
                 ->orderByDesc('diukur_pada')
                 ->get();
         }
 
-        return view('keluarga.riwayat', compact('lansiaList', 'selectedId', 'riwayat'));
+        return view('keluarga.riwayat', compact(
+            'lansiaList',
+            'selectedId',
+            'riwayat'
+        ));
     }
 
+    /* ==========================================
+       JADWAL KEGIATAN (dengan filter tanggal)
+       ========================================== */
     public function jadwal(Request $request)
     {
-        $user = Auth::user();
+        $user       = Auth::user();
         $lansiaList = $user->lansiaKeluarga()->orderBy('nama_lansia')->get();
-        $selectedId = $request->get('lansia_id') ?: ($lansiaList->first()->id ?? null);
-        if ($selectedId && !$lansiaList->contains('id', $selectedId)) {
-            $selectedId = null;
+
+        $selectedId   = $request->get('lansia_id', 'all');
+        $selectedDate = $request->get('tanggal', null);
+        $reset        = $request->get('reset', null);
+
+        // Jika tombol reset ditekan → hapus tanggal & redirect
+        if ($reset) {
+            return redirect()->route('keluarga.jadwal', ['lansia_id' => $selectedId]);
         }
 
-        $jadwal = collect();
-        if ($selectedId) {
-            $jadwal = JadwalKegiatan::where('lansia_id', $selectedId)
-                ->orderBy('tanggal')
-                ->get();
+        // Query dasar
+        $jadwalQuery = JadwalKegiatan::query()
+            ->when($selectedId !== 'all', function ($q) use ($selectedId) {
+                $q->where('lansia_id', $selectedId);
+            })
+            ->when($selectedId === 'all', function ($q) use ($lansiaList) {
+                $q->whereIn('lansia_id', $lansiaList->pluck('id'));
+            });
+
+        // Filter tanggal jika dipilih (format input: YYYY-MM-DD)
+        if ($selectedDate) {
+            $jadwalQuery->whereDate('tanggal', $selectedDate);
         }
 
-        return view('keluarga.jadwal', compact('lansiaList', 'selectedId', 'jadwal'));
+        $jadwal = $jadwalQuery
+            ->orderBy('tanggal')
+            ->orderBy('waktu')
+            ->get();
+
+        // Pesan jika tidak ada kegiatan di tanggal tersebut
+        $emptyMessage = null;
+        if ($selectedDate && $jadwal->isEmpty()) {
+            $emptyMessage = "Tidak ada kegiatan pada tanggal " .
+                \Carbon\Carbon::parse($selectedDate)->format('d/m/Y') . ".";
+        }
+
+        return view('keluarga.jadwal', compact(
+            'lansiaList',
+            'selectedId',
+            'selectedDate',
+            'jadwal',
+            'emptyMessage'
+        ));
     }
 
+    /* ==========================================
+       NOTIFIKASI
+       ========================================== */
     public function notifikasi()
     {
         $user = Auth::user();
-        $notifikasi = $user->notifikasi()->orderByDesc('created_at')->limit(50)->get();
+
+        $notifikasi = $user->notifikasi()
+            ->orderByDesc('created_at')
+            ->limit(50)
+            ->get();
+
         return view('keluarga.notifikasi', compact('notifikasi'));
     }
 
+    /* ==========================================
+       PROFIL
+       ========================================== */
     public function profil()
     {
         $user = Auth::user();
         return view('keluarga.profil', compact('user'));
     }
 
+    /* ==========================================
+       GANTI KATA SANDI
+       ========================================== */
     public function ubahSandi(Request $request)
     {
         $user = Auth::user();
@@ -105,8 +182,12 @@ class KeluargaPortalController extends Controller
             return back()->withErrors(['password_lama' => 'Kata sandi lama tidak sesuai.']);
         }
 
-        $user->update(['password' => $validated['password_baru']]);
+        $user->update([
+            'password' => bcrypt($validated['password_baru']),
+        ]);
 
-        return redirect()->route('keluarga.profil')->with('success', 'Kata sandi berhasil diubah.');
+        return redirect()
+            ->route('keluarga.profil')
+            ->with('success', 'Kata sandi berhasil diubah.');
     }
 }
