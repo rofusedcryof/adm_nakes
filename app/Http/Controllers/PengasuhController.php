@@ -7,6 +7,7 @@ use App\Models\Lansia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\JadwalKegiatan;
+use App\Models\RiwayatKondisi; 
 
 class PengasuhController extends Controller
 {
@@ -34,12 +35,17 @@ class PengasuhController extends Controller
 
         $validated['password'] = Hash::make($validated['password']);
         Pengasuh::create($validated);
-        return redirect()->route('admin.pengasuh.index')->with('success', 'Data pengasuh berhasil ditambahkan.');
+
+        return redirect()->route('admin.pengasuh.index')
+            ->with('success', 'Data pengasuh berhasil ditambahkan.');
     }
 
     public function edit(Pengasuh $pengasuh)
     {
-        return view('admin.pengasuh.form', compact('pengasuh'), ['mode' => 'edit', 'item' => $pengasuh]);
+        return view('admin.pengasuh.form', compact('pengasuh'), [
+            'mode' => 'edit',
+            'item' => $pengasuh
+        ]);
     }
 
     public function update(Request $request, Pengasuh $pengasuh)
@@ -59,27 +65,32 @@ class PengasuhController extends Controller
         }
 
         $pengasuh->update($validated);
-        return redirect()->route('admin.pengasuh.index')->with('success', 'Data pengasuh berhasil diperbarui.');
+
+        return redirect()->route('admin.pengasuh.index')
+            ->with('success', 'Data pengasuh berhasil diperbarui.');
     }
 
     public function destroy(Pengasuh $pengasuh)
     {
         $pengasuh->delete();
-        return redirect()->route('admin.pengasuh.index')->with('success', 'Data pengasuh berhasil dihapus.');
+
+        return redirect()->route('admin.pengasuh.index')
+            ->with('success', 'Data pengasuh berhasil dihapus.');
     }
 
-    // ============================================================
-    // 🔹 FITUR KEGIATAN LANSIA
-    // ============================================================
+
+    /* ============================================================
+       FITUR KEGIATAN LANSIA
+       ============================================================ */
 
     public function kegiatanIndex()
     {
         $allLansia = Lansia::all();
 
-        // Ambil semua kegiatan dari semua lansia
+        // Ambil semua kegiatan
         $jadwals = JadwalKegiatan::with('lansia')
-                ->orderBy('tanggal', 'desc')
-                ->get();
+                    ->orderBy('tanggal', 'desc')
+                    ->get();
 
         return view('pengasuh.kegiatan-lansia', compact('allLansia', 'jadwals'));
     }
@@ -89,7 +100,6 @@ class PengasuhController extends Controller
         $allLansia = Lansia::all();
 
         $lansia = Lansia::where('id_lansia', $id_lansia)->first();
-
         $jadwals = collect();
 
         if ($lansia) {
@@ -99,5 +109,37 @@ class PengasuhController extends Controller
         }
 
         return view('pengasuh.kegiatan-lansia', compact('allLansia', 'jadwals', 'lansia'));
+    }
+
+
+
+    /* ============================================================
+       FITUR RIWAYAT KONDISI LANSIA 
+       ============================================================ */
+
+    public function riwayat(Request $request)
+    {
+        // Ambil semua lansia untuk dropdown
+        $allLansia = Lansia::orderBy('nama_lansia')->get();
+
+        // Default pilih lansia pertama jika belum dipilih
+        $id_lansia = $request->id_lansia ?? ($allLansia->first()->id_lansia ?? null);
+
+        // Ambil data lansia terpilih
+        $lansia = Lansia::where('id_lansia', $id_lansia)->first();
+
+        $riwayat = collect();
+
+        if ($lansia) {
+            $riwayat = RiwayatKondisi::where('lansia_id', $lansia->id)
+                ->orderBy('tanggal', 'desc')
+                ->get();
+        }
+
+        return view('pengasuh.riwayat', compact(
+            'allLansia',
+            'lansia',
+            'riwayat'
+        ));
     }
 }

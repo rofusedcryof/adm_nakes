@@ -225,9 +225,10 @@ class PengasuhDashboardController extends Controller
 
     public function profil()
     {
-        $user = auth()->user();
-        return view('pengasuh.profil', compact('user'));
+        $pengasuh = auth()->user();
+        return view('pengasuh.profil', compact('pengasuh'));
     }
+
 
     public function ubahSandi(Request $request)
     {

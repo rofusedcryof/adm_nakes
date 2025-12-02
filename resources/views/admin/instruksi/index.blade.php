@@ -89,7 +89,7 @@ body {
     display: block;
 }
 
-/* ===================== POPUPS (BIGGER SIZE) ===================== */
+/* ===================== POPUPS ===================== */
 .popup {
     position: fixed;
     top: 0; left: 0;
@@ -103,7 +103,7 @@ body {
 
 .popup-box {
     background: white;
-    width: 420px;              /* diperbesar */
+    width: 420px;
     padding: 2rem;
     border-radius: 12px;
     text-align: center;
@@ -112,7 +112,7 @@ body {
 
 .popup-box input {
     width: 100%;
-    padding: 1rem;             /* diperbesar */
+    padding: 1rem;
     font-size: 1rem;
     margin-top: 1rem;
     border-radius: 10px;
@@ -121,7 +121,7 @@ body {
 
 .popup-btn {
     width: 100%;
-    padding: .9rem;            /* diperbesar */
+    padding: .9rem;
     background: #2A857D;
     color: white;
     border: none;
@@ -134,7 +134,7 @@ body {
 
 .popup-close {
     width: 100%;
-    padding: .9rem;             /* diperbesar */
+    padding: .9rem;
     background: #dc3545;
     color: white;
     border: none;
@@ -151,17 +151,25 @@ body {
     justify-content: center;
 }
 
+/* ======= BACKGROUND LOGO (WATERMARK) ======= */
 .content {
+    position: relative;
     background: #2A857D;
     border-radius: 15px;
     padding: 2.5rem;
     width: 100%;
     min-height: calc(100vh - 150px);
-    position: relative;
+
+    /* Tambahkan logo HEALTHSYNC */
+    background-image: url('/images/HEALTHSYNC.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 420px;  /* Sesuaikan ukuran */
 }
 
 .content-overlay {
-    background: white;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(3px);
     position: absolute;
     top: 30px;
     left: 30px;
@@ -171,7 +179,7 @@ body {
     box-shadow: 0 4px 15px rgba(0,0,0,.2);
 }
 
-/* ===================== TABEL SIMETRIS ===================== */
+/* ===================== TABEL ===================== */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -182,13 +190,17 @@ th, td {
     padding: .8rem;
     border-bottom: 1px solid #e5e7eb;
     font-size: .9rem;
-    text-align: center !important;      /* RATATENGAH */
+    text-align: center !important;
     vertical-align: middle !important;
 }
 
 th {
     background: #e5f3f3;
     font-weight: 800;
+}
+
+tbody tr:hover {
+    background: #f4fafa;
 }
 
 .badge {
@@ -216,6 +228,11 @@ th {
     border: none;
     cursor: pointer;
     font-weight: 600;
+    transition: .2s;
+}
+
+.btn-hapus:hover {
+    background: #b91c1c;
 }
 </style>
 </head>
@@ -228,7 +245,6 @@ th {
         <div class="brand">HEALTH SYNC</div>
 
         <div class="nav-right">
-
             <!-- FILTER -->
             <div class="filter-dropdown">
                 <button class="filter-btn">Filter ▼</button>
@@ -322,8 +338,8 @@ th {
 
             <td>
                 <form method="POST"
-                      action="{{ route('admin.instruksi.destroy',$it) }}"
-                      onsubmit="event.preventDefault(); confirmDelete(this)">
+                    action="{{ route('admin.instruksi.destroy',$it) }}"
+                    onsubmit="event.preventDefault(); confirmDelete(this)">
                     @csrf
                     @method('DELETE')
                     <button class="btn-hapus">Hapus</button>
@@ -341,7 +357,6 @@ th {
 </main>
 </div>
 
-<!-- ===================== JAVASCRIPT ===================== -->
 <script>
 function openFilter(type,title,placeholder){
     document.getElementById('filter-type').value = type;

@@ -130,6 +130,10 @@
 
     /* PAGE WRAPPER */
     .wrap { display: flex; justify-content: center; }
+
+    /* ============================
+       BACKGROUND LOGO WATERMARK
+       ============================ */
     .content {
         background: #2A857D;
         border-radius: 15px;
@@ -137,6 +141,11 @@
         width: 100%;
         position: relative;
         min-height: calc(100vh - 150px);
+
+        background-image: url('/images/HEALTHSYNC.png');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 420px;  
     }
 
     .card-overlay {
@@ -144,10 +153,11 @@
         top: 30px;
         left: 30px;
         right: 30px;
-        background: white;
+        background: rgba(255,255,255,0.93);
         padding: 2rem;
         border-radius: 10px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        backdrop-filter: blur(4px);
     }
 
     .card-header {
@@ -173,7 +183,7 @@
     th, td {
         padding: .8rem;
         border-bottom: 1px solid #ddd;
-        text-align: center;      /* 🔥 AGAR SIMETRIS */
+        text-align: center;
         vertical-align: middle;
     }
 
@@ -183,10 +193,9 @@
     }
 
     td:nth-child(5) {
-    text-align: center;     
-    padding: 0 10px;        
-    white-space: nowrap;    
-
+        text-align: center;
+        padding: 0 10px;
+        white-space: nowrap;
     }
 
     .btn-edit, .btn-hapus {
@@ -221,11 +230,10 @@
                     <button onclick="openFilter('id', 'Cari berdasarkan ID Jadwal', 'Masukkan ID Jadwal...')">ID Jadwal</button>
                     <button onclick="openFilter('lansia', 'Cari berdasarkan Nama Lansia', 'Masukkan nama lansia...')">Nama Lansia</button>
                     <button onclick="openFilter('tanggal', 'Cari berdasarkan Tanggal', 'Pilih tanggal...')">Tanggal</button>
-                    <button onclick="openFilter('aktivitas', 'Cari berdasarkan Aktivitas', 'Masukkan aktivitas...')">Berdasarkan Aktivitas</button>
-
-                    
+                    <button onclick="openFilter('aktivitas', 'Cari berdasarkan Aktivitas', 'Masukkan aktivitas...')">Aktivitas</button>
                 </div>
             </div>
+
             <a href="{{ route('admin.dashboard') }}">HOME</a>
         </div>
     </div>
@@ -260,7 +268,7 @@
 <div id="success-popup" class="popup" style="display:none;">
     <div class="popup-box">
         <h3 id="success-title" style="margin-bottom:20px;">Berhasil!</h3>
-        <button onclick="closeSuccess()" class="popup-btn" style="background:#2A857D;">OK</button>
+        <button onclick="closeSuccess()" class="popup-btn">OK</button>
     </div>
 </div>
 
@@ -287,16 +295,14 @@
                     </tr>
                 </thead>
 
-             <tbody>
+                <tbody>
                 @forelse ($items as $item)
                 <tr>
                     <td>{{ $item->id_jadwal }}</td>
                     <td>{{ $item->lansia->nama_lansia ?? '-' }}</td>
                     <td>{{ $item->tanggal?->format('d-m-Y') }}</td>
                     <td>{{ $item->waktu }}</td>
-
-                    <!-- PERBAIKAN DI SINI -->
-                    <td class="col-aktivitas">{{ $item->aktivitas }}</td>
+                    <td>{{ $item->aktivitas }}</td>
 
                     <td>
                         <button 
@@ -326,9 +332,8 @@
     </main>
 </div>
 
-<!-- JAVASCRIPT -->
 <script>
-/* FILTER POPUP */
+/* FILTER */
 function openFilter(type, title, placeholder) {
     document.getElementById('filter-type').value = type;
     document.getElementById('popup-title').innerText = title;
@@ -347,8 +352,7 @@ function closePopup() {
     document.getElementById('filter-popup').style.display = "none";
 }
 
-
-/* KONFIRMASI EDIT & DELETE */
+/* KONFIRMASI */
 let editUrl = "";
 let deleteForm = null;
 
@@ -378,8 +382,7 @@ function closeConfirm() {
     document.getElementById('confirm-popup').style.display = "none";
 }
 
-
-/* SUCCESS POPUP */
+/* SUKSES */
 function showSuccess(message) {
     document.getElementById('success-title').innerText = message;
     document.getElementById('success-popup').style.display = "flex";
@@ -400,4 +403,3 @@ window.onload = function() {
 
 </body>
 </html>
-

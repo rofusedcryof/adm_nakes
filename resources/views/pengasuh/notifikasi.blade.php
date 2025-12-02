@@ -1,51 +1,145 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HEALTH SYNC - Notifikasi</title>
-    <style>
-        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background:#E5E5E5;min-height:100vh;padding-bottom:80px;margin:0}
-        .header{background:#2A857D;color:#fff;padding:1rem;text-align:center;font-weight:bold;letter-spacing:1px}
-        .container{padding:1rem}
-        .item{background:#fff;border-radius:12px;padding:0.75rem 1rem;margin-bottom:0.6rem;box-shadow:0 1px 3px rgba(0,0,0,0.1)}
-        .item-title{font-weight:600;color:#111827}
-        .item-meta{font-size:0.8rem;color:#6B7280}
-        .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;align-items:center;padding:0.75rem 0;box-shadow:0 -2px 8px rgba(0,0,0,0.1)}
-        .nav-item{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:#000;flex:1}
-        .nav-item.active{color:#2A857D}
-        .nav-icon{width:24px;height:24px;margin-bottom:0.25rem}
-        .icon-home{display:inline-block;width:24px;height:24px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%232A857D'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'/%3E%3C/svg%3E");background-size:contain}
-        .icon-bell{display:inline-block;width:24px;height:24px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23000'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9'/%3E%3C/svg%3E");background-size:contain}
-        .icon-profile{display:inline-block;width:24px;height:24px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E");background-size:contain}
-    </style>
-</head>
-<body>
-    <div class="header">HEALTH SYNC</div>
-    <div class="container">
-        @forelse($items as $n)
-            <div class="item">
-                <div class="item-title">{{ $n->pesan }}</div>
-                <div class="item-meta">{{ $n->tipe }} • {{ optional($n->created_at)->format('d/m/Y H:i') }}</div>
-            </div>
-        @empty
-            <div class="item">Tidak ada notifikasi.</div>
-        @endforelse
-    </div>
+@extends('pengasuh.layout')
 
-    <div class="bottom-nav">
-        <a href="{{ route('pengasuh.dashboard') }}" class="nav-item">
-            <span class="icon-home nav-icon"></span>
-            <span style="font-size:12px;">Home</span>
-        </a>
-        <a href="{{ route('pengasuh.notifikasi') }}" class="nav-item active">
-            <span class="icon-bell nav-icon"></span>
-            <span style="font-size:12px;">Notifikasi</span>
-        </a>
-        <a href="{{ route('pengasuh.profil') }}" class="nav-item">
-            <span class="icon-profile nav-icon"></span>
-            <span style="font-size:12px;">Profil</span>
-        </a>
+@section('content')
+
+<style>
+    /* BACKGROUND HIJAU FULL */
+    .bg-green {
+        background:#1E7F77;
+        width:100%;
+        min-height:calc(100vh - 90px);
+        padding:25px 0 80px 0;
+        position:relative;
+        display:flex;
+        justify-content:center;
+        align-items:flex-start;
+    }
+
+    /* LOGO WATERMARK */
+    .bg-green::before {
+        content:"";
+        position:absolute;
+        top:55%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        width:300px;
+        height:300px;
+        background:url('/images/HEALTHSYNC.png') no-repeat center;
+        background-size:260px;
+        opacity:.22;
+    }
+
+    /* WRAPPER DALAM */
+    .wrap {
+        width:360px;
+        max-width:100%;
+        position:relative;
+        z-index:5;
+        padding:0 14px;
+    }
+
+    /* CARD */
+    .notif-card {
+        background:white;
+        padding:20px;
+        border-radius:18px;
+        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+        margin-bottom:20px;
+    }
+
+    .notif-title {
+        font-size:1rem;
+        font-weight:700;
+        color:#2A857D;
+        margin-bottom:14px;
+    }
+
+    .notif-list { padding:0; margin:0; list-style:none; }
+
+    .notif-item {
+        padding:14px 0;
+        border-bottom:1px solid #eee;
+    }
+
+    .notif-item:last-child { border-bottom:none; }
+
+    .notif-type-emergency {
+        font-size:.85rem;
+        font-weight:700;
+        color:#b91c1c;
+        display:flex;
+        align-items:center;
+        gap:6px;
+    }
+
+    .notif-type-info {
+        font-size:.85rem;
+        font-weight:700;
+        color:#1d4ed8;
+        display:flex;
+        align-items:center;
+        gap:6px;
+    }
+
+    .notif-message {
+        margin-top:6px;
+        font-size:.9rem;
+        color:#333;
+        line-height:1.35rem;
+    }
+
+    .notif-date {
+        font-size:.75rem;
+        color:#777;
+        margin-top:6px;
+    }
+
+    .notif-empty {
+        text-align:center;
+        padding:20px 0;
+        font-size:.9rem;
+        color:#777;
+    }
+</style>
+
+<div class="bg-green">
+    <div class="wrap">
+
+        <div class="notif-card">
+
+            <div class="notif-title">Notifikasi</div>
+
+            @if($items->isEmpty())
+
+                <div class="notif-empty">Belum ada notifikasi.</div>
+
+            @else
+                <ul class="notif-list">
+
+                    @foreach($items as $n)
+                    <li class="notif-item">
+
+                        @if($n->tipe === 'emergency')
+                            <div class="notif-type-emergency">🚨 Emergency</div>
+                        @else
+                            <div class="notif-type-info">ℹ️ Info</div>
+                        @endif
+
+                        <div class="notif-message">{{ $n->pesan }}</div>
+
+                        <div class="notif-date">
+                            {{ \Carbon\Carbon::parse($n->created_at)->format('d/m/Y H:i') }}
+                        </div>
+
+                    </li>
+                    @endforeach
+
+                </ul>
+            @endif
+
+        </div>
+
     </div>
-</body>
-</html>
+</div>
+
+@endsection

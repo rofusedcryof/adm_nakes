@@ -1,304 +1,223 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HEALTH SYNC - Riwayat Kondisi Lansia</title>
+@extends('pengasuh.layout')
+
+@section('content')
 
 <style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family:Arial, sans-serif; }
-
-    body {
-        background:#E5E5E5;
-        padding-bottom:90px;
-    }
-
-    /* HEADER */
-    .header {
-        background:#2A857D;
-        color:white;
-        padding:16px;
-        text-align:center;
-        font-size:1.25rem;
-        font-weight:700;
-        position:relative;
-    }
-
-    .back-btn {
-        position:absolute;
-        left:16px;
-        top:50%;
-        transform:translateY(-50%);
-        background:none;
-        border:none;
-        color:white;
-        font-size:1.4rem;
-        cursor:pointer;
-    }
-
-    /* BACKGROUND HIJAU + LOGO */
     .bg-green {
         background:#1E7F77;
         width:100%;
-        padding-top:35px;
-        padding-bottom:60px;
-        min-height:calc(100vh - 130px);
+        min-height:calc(100vh - 90px);
+        padding:25px 0 70px 0;
         position:relative;
-        background-image:url('/images/HEALTHSYNC.png');
-        background-repeat:no-repeat;
-        background-position:center 250px;
-        background-size:240px;
-        opacity:0.97;
+        display:flex;
+        justify-content:center;
     }
 
     .bg-green::before {
         content:"";
         position:absolute;
-        top:0;
-        left:0;
-        width:100%;
-        height:100%;
-        background-image:url('/images/HEALTHSYNC.png');
+        top:52%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        width:300px;
+        height:300px;
+        background:url('/images/HEALTHSYNC.png') no-repeat center;
         background-size:260px;
-        background-repeat:no-repeat;
-        background-position:center 120px;
-        opacity:0.14;
-        filter:blur(2px);
-        z-index:0;
+        opacity:.22;
     }
 
-    .container {
+    .wrap {
         width:360px;
-        max-width:calc(100% - 20px);
-        margin:auto;
+        max-width:100%;
         position:relative;
-        z-index:5;
+        z-index:10;
+        padding:0 14px;
     }
 
-    /* BOX PUTIH BESAR */
-    .content-box {
+    .card {
         background:white;
-        border-radius:16px;
         padding:18px;
-        box-shadow:0 4px 10px rgba(0,0,0,0.2);
-        margin-top:10px;
+        border-radius:16px;
+        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+        margin-bottom:20px;
     }
 
-    label {
+    .label {
         font-weight:700;
-        color:#444;
-        font-size:0.9rem;
+        font-size:.9rem;
+        color:#2A857D;
+        margin-bottom:8px;
     }
 
     select {
         width:100%;
         padding:12px;
-        border-radius:12px;
-        border:1px solid #DDD;
-        margin-top:8px;
-        font-size:1rem;
+        border-radius:10px;
+        border:1px solid #dcdcdc;
+        font-size:.9rem;
     }
 
-    /* RIWAYAT ITEM */
+    table {
+        width:100%;
+        border-collapse:collapse;
+        margin-top:10px;
+    }
+
+    th {
+        padding:10px;
+        background:#E5E7EB;
+        color:#2A857D;
+        font-size:.85rem;
+        text-align:left;
+    }
+
+    td {
+        padding:10px;
+        background:#F9FAFB;
+        font-size:.85rem;
+        border-bottom:1px solid #e0e0e0;
+    }
+
+    .empty {
+        padding:18px;
+        text-align:center;
+        color:#666;
+    }
+
+    .title-top {
+        font-size:1rem;
+        font-weight:700;
+        color:white;
+        margin-bottom:14px;
+        display:flex;
+        align-items:center;
+        gap:8px;
+    }
+
+    .back-btn {
+        font-size:1.3rem;
+        text-decoration:none;
+        color:white;
+    }
+    .riwayat-list {
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    }
+
     .riwayat-item {
-        background:white;
-        border-radius:16px;
-        padding:16px;
-        margin-top:18px;
-        box-shadow:0 4px 10px rgba(0,0,0,0.15);
+        background:#F9FAFB;
+        border-radius:14px;
+        padding:14px 16px;
+        border-left:5px solid #2A857D;
+        box-shadow:0 3px 8px rgba(0,0,0,0.12);
     }
 
     .riwayat-date {
-        font-weight:bold;
+        font-size:.9rem;
+        font-weight:700;
         color:#2A857D;
-        margin-bottom:12px;
-        padding-bottom:6px;
-        border-bottom:1px solid #DDD;
+        margin-bottom:10px;
     }
 
-    .riwayat-body {
-        display:grid;
-        grid-template-columns:repeat(2,1fr);
-        gap:10px;
-    }
-
-    .riwayat-item-label {
-        color:#6B6B6B;
-        font-size:0.85rem;
-    }
-
-    .riwayat-item-value {
-        font-weight:bold;
-        color:#2A857D;
-        margin-top:2px;
-    }
-
-    .empty-state {
-        text-align:center;
-        padding:20px 0;
-        color:#888;
-    }
-
-    /* ⭐ NAVBAR DASHBOARD ASLI */
-    .bottom-nav {
-        position:fixed;
-        bottom:0;
-        left:50%;
-        transform:translateX(-50%);
-        width:420px;
-        max-width:100%;
-        background:#2A857D;
-        padding:6px 10px;
-        z-index:10;
-    }
-
-    .nav-inner {
-        background:white;
+    .riwayat-row {
         display:flex;
-        border-radius:12px;
-        overflow:hidden;
+        justify-content:space-between;
+        padding:6px 0;
+        border-bottom:1px solid #e5e7eb;
     }
 
-    .nav-item {
-        flex:1;
-        text-align:center;
-        padding:10px 0;
-        font-size:0.78rem;
-        border-right:1px solid #EEE;
-        text-decoration:none;
-        color:black;
+    .riwayat-row:last-child {
+        border-bottom:none;
     }
 
-    .nav-item:last-child { border-right:none; }
-
-    .nav-item.active {
-        color:#2A857D;
-        font-weight:bold;
+    .r-label {
+        font-size:.85rem;
+        color:#555;
     }
 
-    .nav-icon {
-        width:22px;
-        height:22px;
-        margin-bottom:2px;
-        background-size:contain;
-        background-repeat:no-repeat;
-        display:inline-block;
-    }
-
-    .icon-home {
-        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' stroke='%232A857D' fill='none' viewBox='0 0 24 24'%3E%3Cpath d='M3 12l9-9 9 9' stroke-width='2'/%3E%3Cpath d='M9 21V12h6v9' stroke-width='2'/%3E%3C/svg%3E");
-    }
-
-    .icon-bell {
-        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' stroke='%232A857D' fill='none' viewBox='0 0 24 24'%3E%3Cpath d='M15 17h5l-1.405-1.405C18.21 14.79 18 14.42 18 14V11c0-3.314-2.239-6-5-6S8 7.686 8 11v3c0 .42-.21.79-.595 1.595L6 17h5' stroke-width='2'/%3E%3Cpath d='M14 17v1a2 2 0 11-4 0v-1' stroke-width='2'/%3E%3C/svg%3E");
-    }
-
-    .icon-user {
-        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' stroke='%232A857D' fill='none' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M6 20v-1c0-3 3-5 6-5s6 2 6 5v1' stroke-width='2'/%3E%3C/svg%3E");
+    .r-value {
+        font-size:.85rem;
+        font-weight:700;
+        color:#222;
     }
 
 </style>
-</head>
-
-<body>
-
-<div class="header">
-    <button class="back-btn" onclick="window.location.href='{{ route('pengasuh.dashboard') }}'">←</button>
-    RIWAYAT KONDISI LANSIA
-</div>
 
 <div class="bg-green">
-    <div class="container">
+    <div class="wrap">
 
-        <div class="content-box">
+       <div class="title-top">RIWAYAT KONDISI LANSIA</div>
 
-            <label>Nama Lansia</label>
+
+        {{-- PILIH LANSIA --}}
+        <div class="card">
+            <div class="label">Nama Lansia</div>
             <form method="GET" action="{{ route('pengasuh.riwayat') }}">
                 <select name="lansia_id" onchange="this.form.submit()">
-                    <option value="">-- Pilih Lansia --</option>
                     @foreach($lansia as $l)
-                        <option value="{{ $l->id }}" {{ $selectedId == $l->id ? 'selected' : '' }}>
+                        <option value="{{ $l->id }}"
+                            {{ $selectedId == $l->id ? 'selected' : '' }}>
                             {{ $l->nama_lansia }} ({{ $l->id_lansia }})
                         </option>
                     @endforeach
                 </select>
             </form>
-
-            <!-- RIWAYAT LIST -->
-            @if($riwayat->count() > 0)
-                @foreach($riwayat as $r)
-                    <div class="riwayat-item">
-                        <div class="riwayat-date">{{ $r->diukur_pada->format('d/m/Y H:i') }}</div>
-
-                        <div class="riwayat-body">
-                            @if($r->sistol && $r->diastol)
-                                <div>
-                                    <div class="riwayat-item-label">Tekanan Darah</div>
-                                    <div class="riwayat-item-value">{{ $r->sistol }}/{{ $r->diastol }} mmHg</div>
-                                </div>
-                            @endif
-
-                            @if($r->nadi)
-                                <div>
-                                    <div class="riwayat-item-label">Nadi</div>
-                                    <div class="riwayat-item-value">{{ $r->nadi }} bpm</div>
-                                </div>
-                            @endif
-
-                            @if($r->suhu)
-                                <div>
-                                    <div class="riwayat-item-label">Suhu</div>
-                                    <div class="riwayat-item-value">{{ $r->suhu }}°C</div>
-                                </div>
-                            @endif
-
-                            @if($r->gula_darah)
-                                <div>
-                                    <div class="riwayat-item-label">Gula Darah</div>
-                                    <div class="riwayat-item-value">{{ $r->gula_darah }} mg/dL</div>
-                                </div>
-                            @endif
-                        </div>
-
-                        @if($r->catatan)
-                            <div style="border-top:1px solid #DDD; margin-top:10px; padding-top:8px;">
-                                <div class="riwayat-item-label">Catatan</div>
-                                <div style="color:#2A857D;">{{ $r->catatan }}</div>
-                            </div>
-                        @endif
-                    </div>
-                @endforeach
-            @else
-                <div class="riwayat-item">
-                    <div class="empty-state">Tidak ada data riwayat.</div>
-                </div>
-            @endif
-
         </div>
+
+{{-- DATA RIWAYAT --}}
+<div class="card">
+
+    @if($riwayat->isEmpty())
+        <div class="empty">Tidak ada data riwayat.</div>
+    @else
+
+        <div class="riwayat-list">
+
+            @foreach($riwayat as $r)
+            <div class="riwayat-item">
+
+                <div class="riwayat-date">
+                    {{ $r->diukur_pada->format('d/m/Y H:i') }}
+                </div>
+
+                <div class="riwayat-row">
+                    <span class="r-label">Tekanan</span>
+                    <span class="r-value">
+                        @if($r->sistol && $r->diastol)
+                            {{ $r->sistol }}/{{ $r->diastol }} mmHg
+                        @else
+                            -
+                        @endif
+                    </span>
+                </div>
+
+                <div class="riwayat-row">
+                    <span class="r-label">Nadi</span>
+                    <span class="r-value">{{ $r->nadi ?? '-' }} bpm</span>
+                </div>
+
+                <div class="riwayat-row">
+                    <span class="r-label">Suhu</span>
+                    <span class="r-value">{{ $r->suhu ? $r->suhu . '°C' : '-' }}</span>
+                </div>
+
+                <div class="riwayat-row">
+                    <span class="r-label">Gula Darah</span>
+                    <span class="r-value">{{ $r->gula_darah ? $r->gula_darah . ' mg/dL' : '-' }}</span>
+                </div>
+
+            </div>
+            @endforeach
+        
+        </div>
+
+    @endif
+
+</div>
+
+
     </div>
 </div>
 
-<!-- NAVIGATION BAR -->
-<div class="bottom-nav">
-    <div class="nav-inner">
-
-        <!-- HOME -->
-        <a href="{{ route('pengasuh.dashboard') }}" class="nav-item active">
-            <span class="nav-icon icon-home"></span><br>Home
-        </a>
-
-        <!-- NOTIFIKASI -->
-        <a href="{{ route('pengasuh.notifikasi') }}" class="nav-item">
-            <span class="nav-icon icon-bell"></span><br>Notifikasi
-        </a>
-
-        <!-- PROFILE -->
-        <a href="{{ route('pengasuh.profil') }}" class="nav-item">
-            <span class="nav-icon icon-user"></span><br>Profile
-        </a>
-
-    </div>
-</div>
-
-</body>
-</html>
+@endsection
