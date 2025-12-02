@@ -50,9 +50,6 @@
 
         <label>Kata sandi lama</label>
         <input type="password" name="password_lama" class="input-field" required>
-        @error('password_lama')
-            <div class="error-text">{{ $message }}</div>
-        @enderror
 
         <label style="margin-top:12px;">Kata sandi baru</label>
         <input type="password" name="password_baru" class="input-field" required>
@@ -66,40 +63,63 @@
 
 
 
-<!-- ===================== LOGOUT BUTTON (PINNED TO BOTTOM) ===================== -->
+<!-- ===================== LOGOUT BUTTON ===================== -->
 <div class="logout-container">
     <button onclick="openLogout()" class="btn-danger">Keluar</button>
 </div>
 
 
 
-<!-- ===================== POPUP BANTUAN ===================== -->
+<!-- ===================== POPUP BANTUAN (VERTICAL – RAPI) ===================== -->
 <div id="helpPopup" class="popup-overlay" style="display:none;">
     <div class="popup-box">
-        <h3 style="color:#2A857D;">Bantuan</h3>
-        <p>Butuh bantuan? Hubungi admin via WhatsApp.</p>
-        <a href="https://wa.me/{{ env('SUPPORT_WHATSAPP','628123456789') }}?text=Halo%20Admin%20Health%20Sync%2C%20saya%20butuh%20bantuan" target="_blank" rel="noopener" class="popup-button" style="background:#25D366;">Buka WhatsApp</a>
-        <button onclick="closeHelp()" class="popup-button">Tutup</button>
+
+        <h3 style="color:#2A857D; margin-bottom:8px;">Bantuan</h3>
+
+        <p style="font-size:14px; color:#444; line-height:1.4;">
+            Butuh bantuan? Hubungi admin via WhatsApp.
+        </p>
+
+        <!-- Buka WhatsApp -->
+        <a href="https://wa.me/{{ env('SUPPORT_WHATSAPP','628123456789') }}?text=Halo%20Admin%20Health%20Sync%2C%20saya%20butuh%20bantuan"
+           target="_blank"
+           rel="noopener"
+           class="popup-btn wa full-btn">
+            Buka WhatsApp
+        </a>
+
+        <!-- Tutup -->
+        <button onclick="closeHelp()" class="popup-btn cancel full-btn">
+            Tutup
+        </button>
+
     </div>
 </div>
+
 
 
 <!-- ===================== POPUP LOGOUT ===================== -->
 <div id="logoutPopup" class="popup-overlay" style="display:none;">
     <div class="popup-box">
-        <h3 style="color:#d32f2f;">Keluar?</h3>
+
+        <h3 style="color:#d32f2f;">Keluar</h3>
         <p>Apakah Anda yakin ingin keluar?</p>
 
         <div class="popup-actions">
-            <button onclick="closeLogout()" class="popup-button">Batal</button>
+            <button onclick="closeLogout()" class="popup-btn cancel">Batal</button>
 
-            <form method="POST" action="{{ route('logout') }}" style="flex:1;">
+            <button onclick="document.getElementById('logoutForm').submit()" class="popup-btn logout">
+                Keluar
+            </button>
+
+            <form id="logoutForm" method="POST" action="{{ route('logout') }}" style="display:none;">
                 @csrf
-                <button class="popup-button" style="background:#d32f2f;">Keluar</button>
             </form>
         </div>
+
     </div>
 </div>
+
 
 
 
@@ -150,8 +170,6 @@
     font-weight:bold;
 }
 
-.error-text { font-size:12px; color:#d32f2f; margin-top:3px; }
-
 .logout-container {
     width:100%;
     position:fixed;
@@ -172,9 +190,7 @@
     font-weight:bold;
 }
 
-
-
-/* POPUP STYLE */
+/* POPUP */
 .popup-overlay {
     position:fixed;
     top:0; left:0;
@@ -185,43 +201,75 @@
     align-items:center;
     z-index:999;
 }
+
 .popup-box {
     background:white;
     width:300px;
     padding:20px;
     border-radius:16px;
     text-align:center;
+    box-shadow:0 6px 18px rgba(0,0,0,0.18);
 }
-.popup-button {
-    background:#2A857D;
-    border:none;
-    color:white;
-    padding:10px;
+
+/* BUTTON POPUP */
+.full-btn {
     width:100%;
-    display:block;
+    padding:12px;
     border-radius:10px;
     font-weight:bold;
-    margin-top:10px;
     cursor:pointer;
+    display:block;
+    margin-top:12px;
+    text-align:center;
+    text-decoration:none;
+    border:none;
 }
+
+.popup-btn.wa {
+    background:#25D366;
+    color:white;
+}
+
+.popup-btn.cancel {
+    background:#2A857D;
+    color:white;
+}
+
+/* POPUP LOGOUT BUTTON */
 .popup-actions {
-    display:flex;
-    gap:10px;
-    margin-top:15px;
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
 }
+
+.popup-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+}
+
+.popup-btn.cancel {
+    background: #2A857D; /* Hijau */
+}
+
+.popup-btn.logout {
+    background: #d32f2f; /* Merah */
+}
+
+
 </style>
 
 
 
 <!-- ===================== SCRIPT ===================== -->
 <script>
-function showSection(id) {
-    document.getElementById('passwordSection').style.display = 'none';
 
-    if (id === 'passwordSection') {
-        document.getElementById('passwordSection').style.display = 'block';
-        window.scrollTo({ top: 200, behavior: 'smooth' });
-    }
+function showSection(id) {
+    document.getElementById('passwordSection').style.display = (id === 'passwordSection') ? 'block' : 'none';
 }
 
 function openHelp(){ document.getElementById('helpPopup').style.display='flex'; }
@@ -229,6 +277,7 @@ function closeHelp(){ document.getElementById('helpPopup').style.display='none';
 
 function openLogout(){ document.getElementById('logoutPopup').style.display='flex'; }
 function closeLogout(){ document.getElementById('logoutPopup').style.display='none'; }
+
 </script>
 
 @endsection
