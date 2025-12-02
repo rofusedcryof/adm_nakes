@@ -11,7 +11,8 @@ class AdminJadwalKegiatanController extends Controller
 {
     public function index(Request $request)
     {
-        // Mulai query utama
+        JadwalKegiatan::whereNotNull('jadwal_pada')->where('jadwal_pada', '<', now())->delete();
+
         $query = JadwalKegiatan::with(['lansia','medis']);
 
         // Jika ada parameter filter & value
@@ -40,7 +41,6 @@ class AdminJadwalKegiatanController extends Controller
             }
         }
 
-        // Default ordering
         $items = $query->orderByDesc('tanggal')->orderByDesc('waktu')->paginate(10);
 
         return view('admin.jadwal.home', compact('items'));
@@ -101,6 +101,13 @@ class AdminJadwalKegiatanController extends Controller
 
     public function edit(JadwalKegiatan $jadwal)
     {
+        if ($jadwal->jadwal_pada) {
+            $diff = now()->diffInMinutes($jadwal->jadwal_pada, false);
+            if ($diff <= 15) {
+                return redirect()->route('admin.jadwal.home')->with('success', 'Jadwal tidak bisa diedit mendekati waktu pelaksanaan.');
+            }
+        }
+
         $lansia = Lansia::orderBy('nama_lansia')->get(['id','nama_lansia','id_lansia']);
         $medis = User::where('role','tenaga_medis')->orderBy('name')->get(['id','name']);
 
@@ -116,6 +123,13 @@ class AdminJadwalKegiatanController extends Controller
 
     public function update(Request $request, JadwalKegiatan $jadwal)
     {
+        if ($jadwal->jadwal_pada) {
+            $diff = now()->diffInMinutes($jadwal->jadwal_pada, false);
+            if ($diff <= 15) {
+                return redirect()->route('admin.jadwal.home')->with('success', 'Jadwal tidak dapat diubah karena mendekati atau melewati waktunya.');
+            }
+        }
+
         $data = $request->validate([
             'lansia_id'     => ['required','exists:lansia,id'],
             'medis_user_id' => ['nullable','exists:users,id'],

@@ -305,11 +305,16 @@
                     <td>{{ $item->aktivitas }}</td>
 
                     <td>
-                        <button 
-                            class="btn-edit"
-                            onclick="confirmEdit('{{ route('admin.jadwal.edit', $item) }}')">
-                            Edit
-                        </button>
+                        @php $locked = $item->jadwal_pada && now()->diffInMinutes($item->jadwal_pada, false) <= 15; @endphp
+                        @if($locked)
+                            <button class="btn-edit" disabled title="Terkunci mendekati waktu">Edit</button>
+                        @else
+                            <button 
+                                class="btn-edit"
+                                onclick="confirmEdit('{{ route('admin.jadwal.edit', $item) }}')">
+                                Edit
+                            </button>
+                        @endif
 
                         <form method="POST" 
                             action="{{ route('admin.jadwal.destroy', $item) }}"

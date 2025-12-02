@@ -77,8 +77,9 @@
 <div id="helpPopup" class="popup-overlay" style="display:none;">
     <div class="popup-box">
         <h3 style="color:#2A857D;">Bantuan</h3>
-        <p>Untuk bantuan, silakan hubungi admin melalui WhatsApp resmi.</p>
-        <button onclick="closeHelp()" class="popup-button">OK</button>
+        <p>Butuh bantuan? Hubungi admin via WhatsApp.</p>
+        <a href="https://wa.me/{{ env('SUPPORT_WHATSAPP','628123456789') }}?text=Halo%20Admin%20Health%20Sync%2C%20saya%20butuh%20bantuan" target="_blank" rel="noopener" class="popup-button" style="background:#25D366;">Buka WhatsApp</a>
+        <button onclick="closeHelp()" class="popup-button">Tutup</button>
     </div>
 </div>
 
@@ -197,6 +198,7 @@
     color:white;
     padding:10px;
     width:100%;
+    display:block;
     border-radius:10px;
     font-weight:bold;
     margin-top:10px;
