@@ -41,7 +41,7 @@ class AuthController extends Controller
                 'tenaga_medis', 'nakes' => route('medis.dashboard'),
                 'pengasuh' => route('pengasuh.dashboard'),
                 'keluarga', 'user' => route('keluarga.dashboard'),
-                default => route('dashboard'),
+                default => url('/'),
             };
 
             return redirect()->intended($redirectTo);

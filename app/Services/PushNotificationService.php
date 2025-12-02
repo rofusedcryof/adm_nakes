@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\PushSubscription;
 use Illuminate\Support\Facades\Log;
+use Minishlink\WebPush\Subscription;
+use Minishlink\WebPush\WebPush;
 
 class PushNotificationService
 {
@@ -41,15 +43,42 @@ class PushNotificationService
      */
     private function sendPushNotification($endpoint, $publicKey, $authToken, $title, $message, $data = [])
     {
-        // Untuk production, gunakan library seperti minishlink/web-push
-        // Untuk development, kita bisa menggunakan JavaScript di client side
-        
-        // Simpan ke queue atau kirim langsung via API
-        // Di sini kita akan menggunakan pendekatan hybrid:
-        // 1. Simpan notifikasi ke database (sudah ada)
-        // 2. Trigger push notification via service worker di client
-        
-        // Untuk sekarang, kita akan trigger via event yang akan di-handle oleh JavaScript
+        $publicVapidKey = env('VAPID_PUBLIC_KEY');
+        $privateVapidKey = env('VAPID_PRIVATE_KEY');
+
+        if (!$publicVapidKey || !$privateVapidKey) {
+            Log::warning('VAPID keys not configured; push skipped');
+            return false;
+        }
+
+        $subscription = Subscription::create([
+            'endpoint' => $endpoint,
+            'publicKey' => $publicKey,
+            'authToken' => $authToken,
+        ]);
+
+        $payload = json_encode([
+            'title' => $title,
+            'message' => $message,
+            'data' => $data,
+        ], JSON_UNESCAPED_UNICODE);
+
+        $webPush = new WebPush([
+            'VAPID' => [
+                'subject' => env('APP_URL', 'https://example.org'),
+                'publicKey' => $publicVapidKey,
+                'privateKey' => $privateVapidKey,
+            ],
+        ]);
+
+        $webPush->queueNotification($subscription, $payload);
+
+        foreach ($webPush->flush() as $report) {
+            if (!$report->isSuccess()) {
+                Log::warning('Push failed: ' . $report->getReason());
+            }
+        }
+
         return true;
     }
 }

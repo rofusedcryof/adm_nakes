@@ -93,8 +93,7 @@ self.addEventListener('notificationclick', function(event) {
     event.notification.close();
 
     if (event.action === 'open' || !event.action) {
-        event.waitUntil(
-            clients.openWindow('/')
-        );
+        const targetUrl = (event.notification && event.notification.data && event.notification.data.open_url) ? event.notification.data.open_url : '/';
+        event.waitUntil(clients.openWindow(targetUrl));
     }
 });

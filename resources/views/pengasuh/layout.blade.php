@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>HEALTH SYNC - Pengasuh</title>
 
     <style>
@@ -82,7 +83,7 @@
         .icon-user {
             background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000000' viewBox='0 0 24 24'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E");
         }
-    </style>
+</style>
 </head>
 
 <body>
@@ -125,6 +126,15 @@
 
         </div>
     </div>
+
+    <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", function() {
+                navigator.serviceWorker.register("/sw.js");
+            });
+        }
+    </script>
+    <script src="{{ asset('push-notification.js') }}"></script>
 
 </body>
 </html>

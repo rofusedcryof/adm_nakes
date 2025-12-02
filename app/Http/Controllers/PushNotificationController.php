@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PushSubscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Services\PushNotificationService;
 
 class PushNotificationController extends Controller
 {
@@ -91,5 +92,44 @@ class PushNotificationController extends Controller
                 ]
             ]
         ]);
+    }
+
+    /**
+     * Kirim push notifikasi ke satu subscription (opsional, untuk testing)
+     */
+    public function send(Request $request)
+    {
+        $request->validate([
+            'subscription' => ['required','array'],
+            'subscription.endpoint' => ['required','url'],
+            'subscription.keys' => ['required','array'],
+            'subscription.keys.p256dh' => ['required','string'],
+            'subscription.keys.auth' => ['required','string'],
+            'title' => ['required','string'],
+            'message' => ['required','string'],
+            'data' => ['nullable','array'],
+        ]);
+
+        $push = new PushNotificationService();
+        $ok = $push->sendToUser(auth()->id(), $request->title, $request->message, $request->data ?? []);
+
+        return response()->json(['success' => (bool) $ok]);
+    }
+
+    /**
+     * Kirim push ke seluruh subscription milik user tertentu
+     */
+    public function triggerUser(Request $request, $userId)
+    {
+        $request->validate([
+            'title' => ['required','string'],
+            'message' => ['required','string'],
+            'data' => ['nullable','array'],
+        ]);
+
+        $push = new PushNotificationService();
+        $push->sendToUsers([$userId], $request->title, $request->message, $request->data ?? []);
+
+        return response()->json(['success' => true]);
     }
 }

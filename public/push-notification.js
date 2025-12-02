@@ -4,7 +4,7 @@ class PushNotificationService {
         // ⚠️ PENTING: Ganti dengan VAPID Public Key Anda!
         // Cara mendapatkan: https://web-push-codelab.glitch.me/ atau https://vapidkeys.com/
         // Atau jalankan: npm install -g web-push && web-push generate-vapid-keys
-        this.publicVapidKey = 'BJJfuV0o56MujWrpynftdpHqNJng33dSOF4fCCN6NuJBtmwmca9W8AE-t6pi_TmBAM2lwHa2KYfLF-CBvkoYLZs';
+        this.publicVapidKey = 'BPfahcUK3o7HVaiVgU5siDLq-nD9YL_rFh9dk2gyMv4pN_njeHekKMGeFtGBcthW3o7XsU9rPgjyb6YZKTg4N-c';
         this.subscription = null;
     }
 
