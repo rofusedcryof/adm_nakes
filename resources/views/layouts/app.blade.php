@@ -107,7 +107,7 @@
 <body>
     @php
         // Logika untuk menentukan route HOME berdasarkan peran
-        $homeRoute = route('dashboard'); // Fallback default
+        $homeRoute = url('/'); // Fallback default ke root redirect
         if (auth()->check()) {
             $role = auth()->user()->role;
             if ($role === 'admin') {

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>HEALTH SYNC - Riwayat Kondisi Lansia</title>
 
     <style>
@@ -176,6 +177,15 @@
         </div>
 
     </main>
+
+    <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", function() {
+                navigator.serviceWorker.register("/sw.js");
+            });
+        }
+    </script>
+    <script src="{{ asset('push-notification.js') }}"></script>
 
 </body>
 </html>

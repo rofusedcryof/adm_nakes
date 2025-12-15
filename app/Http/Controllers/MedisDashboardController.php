@@ -74,5 +74,15 @@ class MedisDashboardController extends Controller
             'totalInstruksiAktif'
         ));
     }
+
+    public function notifikasi()
+    {
+        $items = Notifikasi::where('user_id', auth()->id())
+            ->orderByDesc('created_at')
+            ->limit(100)
+            ->get();
+
+        return view('medis.notifikasi', compact('items'));
+    }
 }
 

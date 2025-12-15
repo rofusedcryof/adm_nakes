@@ -230,7 +230,7 @@
 
                 <div class="riwayat-row">
                     <span class="r-label">Kegiatan</span>
-                    <span class="r-value">{{ $j->kegiatan }}</span>
+                    <span class="r-value">{{ $j->aktivitas }}</span>
                 </div>
 
             </div>

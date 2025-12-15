@@ -8,6 +8,7 @@ use App\Models\Notifikasi;
 use App\Models\PushSubscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Services\PushNotificationService;
 
 class PengasuhDashboardController extends Controller
 {
@@ -112,7 +113,9 @@ class PengasuhDashboardController extends Controller
             ->orderByDesc('diukur_pada')
             ->get();
 
-        return view('pengasuh.kondisi-darurat', compact('kondisiDarurat'));
+        $lansia = Lansia::orderBy('nama_lansia')->get(['id','nama_lansia','id_lansia']);
+
+        return view('pengasuh.kondisi-darurat', compact('kondisiDarurat', 'lansia'));
     }
 
     public function kirimNotifikasiDaruratLangsung()
@@ -145,6 +148,8 @@ class PengasuhDashboardController extends Controller
 
         $jumlahNotifikasi = 0;
 
+        $push = new PushNotificationService();
+
         if ($kondisiDarurat->isEmpty()) {
             foreach ($semuaLansia as $lansia) {
                 $pesan = "🚨 KONDISI DARURAT: {$lansia->nama_lansia} memerlukan bantuan darurat!";
@@ -154,6 +159,7 @@ class PengasuhDashboardController extends Controller
                     'waktu' => now()->format('Y-m-d H:i:s'),
                 ];
 
+                $recipientIds = [];
                 foreach ($lansia->tenagaMedis as $medis) {
                     Notifikasi::create([
                         'user_id' => $medis->id,
@@ -161,6 +167,7 @@ class PengasuhDashboardController extends Controller
                         'pesan' => $pesan,
                         'data_json' => $data,
                     ]);
+                    $recipientIds[] = $medis->id;
                     $jumlahNotifikasi++;
                 }
 
@@ -171,7 +178,12 @@ class PengasuhDashboardController extends Controller
                         'pesan' => $pesan,
                         'data_json' => $data,
                     ]);
+                    $recipientIds[] = $kel->id;
                     $jumlahNotifikasi++;
+                }
+
+                if (!empty($recipientIds)) {
+                    $push->sendToUsers($recipientIds, '🚨 Kondisi Darurat', $pesan, $data);
                 }
             }
 
@@ -187,8 +199,14 @@ class PengasuhDashboardController extends Controller
                     'lansia_nama' => $lansia->nama_lansia,
                     'kondisi_id' => $kondisi->id,
                     'diukur_pada' => $kondisi->diukur_pada,
+                    'sistol' => $kondisi->sistol,
+                    'diastol' => $kondisi->diastol,
+                    'nadi' => $kondisi->nadi,
+                    'suhu' => $kondisi->suhu,
+                    'gula_darah' => $kondisi->gula_darah,
                 ];
 
+                $recipientIds = [];
                 foreach ($lansia->tenagaMedis as $medis) {
                     Notifikasi::create([
                         'user_id' => $medis->id,
@@ -196,6 +214,7 @@ class PengasuhDashboardController extends Controller
                         'pesan' => $pesan,
                         'data_json' => $data,
                     ]);
+                    $recipientIds[] = $medis->id;
                     $jumlahNotifikasi++;
                 }
 
@@ -206,13 +225,146 @@ class PengasuhDashboardController extends Controller
                         'pesan' => $pesan,
                         'data_json' => $data,
                     ]);
+                    $recipientIds[] = $kel->id;
                     $jumlahNotifikasi++;
+                }
+
+                if (!empty($recipientIds)) {
+                    $push->sendToUsers($recipientIds, '🚨 Kondisi Darurat', $pesan, $data);
                 }
             }
         }
 
         return redirect()->route('pengasuh.dashboard')
             ->with('success', "Notifikasi darurat dikirim ke {$jumlahNotifikasi} penerima.");
+    }
+
+    public function kirimNotifikasiDarurat(Request $request)
+    {
+        $validated = $request->validate([
+            'kondisi_id' => ['required','exists:riwayat_kondisi,id'],
+            'lansia_id' => ['required','exists:lansia,id'],
+        ]);
+
+        $kondisi = RiwayatKondisi::with('lansia')->findOrFail($validated['kondisi_id']);
+        $lansia = $kondisi->lansia;
+
+        $pesan = "🚨 KONDISI DARURAT: {$lansia->nama_lansia} pada " . $kondisi->diukur_pada->format('d/m/Y H:i');
+
+        $dataKeluarga = [
+            'lansia_id' => $lansia->id,
+            'lansia_nama' => $lansia->nama_lansia,
+            'kondisi_id' => $kondisi->id,
+            'diukur_pada' => $kondisi->diukur_pada,
+            'sistol' => $kondisi->sistol,
+            'diastol' => $kondisi->diastol,
+            'nadi' => $kondisi->nadi,
+            'suhu' => $kondisi->suhu,
+            'gula_darah' => $kondisi->gula_darah,
+            'open_url' => route('keluarga.notifikasi'),
+        ];
+        $dataMedis = [
+            'lansia_id' => $lansia->id,
+            'lansia_nama' => $lansia->nama_lansia,
+            'kondisi_id' => $kondisi->id,
+            'diukur_pada' => $kondisi->diukur_pada,
+            'sistol' => $kondisi->sistol,
+            'diastol' => $kondisi->diastol,
+            'nadi' => $kondisi->nadi,
+            'suhu' => $kondisi->suhu,
+            'gula_darah' => $kondisi->gula_darah,
+            'open_url' => route('medis.notifikasi'),
+        ];
+
+        $keluargaIds = [];
+        foreach ($lansia->keluarga as $kel) {
+            Notifikasi::create([
+                'user_id' => $kel->id,
+                'tipe' => 'emergency',
+                'pesan' => $pesan,
+                'data_json' => $dataKeluarga,
+            ]);
+            $keluargaIds[] = $kel->id;
+        }
+
+        $medisIds = [];
+        foreach ($lansia->tenagaMedis as $medis) {
+            Notifikasi::create([
+                'user_id' => $medis->id,
+                'tipe' => 'emergency',
+                'pesan' => $pesan,
+                'data_json' => $dataMedis,
+            ]);
+            $medisIds[] = $medis->id;
+        }
+
+        if (!empty($keluargaIds) || !empty($medisIds)) {
+            $push = new PushNotificationService();
+            if (!empty($keluargaIds)) {
+                $push->sendToUsers($keluargaIds, '🚨 Kondisi Darurat', $pesan, $dataKeluarga);
+            }
+            if (!empty($medisIds)) {
+                $push->sendToUsers($medisIds, '🚨 Kondisi Darurat', $pesan, $dataMedis);
+            }
+        }
+
+        return redirect()->route('pengasuh.kondisi-darurat')
+            ->with('success', 'Notifikasi darurat berhasil dikirim.');
+    }
+
+    public function kirimNotifikasiDaruratManual(Request $request)
+    {
+        $validated = $request->validate([
+            'lansia_id' => ['required','exists:lansia,id'],
+            'pesan'     => ['required','string','max:500'],
+        ]);
+
+        $lansia = Lansia::findOrFail($validated['lansia_id']);
+
+        $pesan = $validated['pesan'];
+
+        $dataKeluarga = [
+            'lansia_id'   => $lansia->id,
+            'lansia_nama' => $lansia->nama_lansia,
+            'waktu'       => now()->format('Y-m-d H:i:s'),
+            'open_url'    => route('keluarga.notifikasi'),
+        ];
+
+        $keluargaIds = [];
+
+        foreach ($lansia->keluarga as $kel) {
+            Notifikasi::create([
+                'user_id'   => $kel->id,
+                'tipe'      => 'emergency',
+                'pesan'     => $pesan,
+                'data_json' => $dataKeluarga,
+            ]);
+            $keluargaIds[] = $kel->id;
+        }
+
+        $medisIds = [];
+        foreach ($lansia->tenagaMedis as $medis) {
+            Notifikasi::create([
+                'user_id'   => $medis->id,
+                'tipe'      => 'emergency',
+                'pesan'     => $pesan,
+                'data_json' => $dataMedis,
+            ]);
+            $medisIds[] = $medis->id;
+        }
+
+        if (!empty($keluargaIds) || !empty($medisIds)) {
+            $push = new PushNotificationService();
+            if (!empty($keluargaIds)) {
+                $push->sendToUsers($keluargaIds, '🚨 Kondisi Darurat', $pesan, $dataKeluarga);
+            }
+            if (!empty($medisIds)) {
+                $push->sendToUsers($medisIds, '🚨 Kondisi Darurat', $pesan, $dataMedis);
+            }
+        }
+
+        return redirect()->route('pengasuh.kondisi-darurat')
+            ->with('success', 'Notifikasi darurat manual berhasil dikirim.');
     }
 
     public function notifikasi()

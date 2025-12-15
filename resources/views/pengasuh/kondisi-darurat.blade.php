@@ -196,6 +196,26 @@
     </div>
 
     <div class="container">
+        <div id="manual-form" style="background:#ffffff; border-radius:12px; padding:1rem; box-shadow:0 1px 3px rgba(0,0,0,0.1); margin-bottom:0.75rem;">
+            <form method="POST" action="{{ route('pengasuh.kirim-notifikasi-darurat-manual') }}">
+                @csrf
+                <div style="display:flex; gap:0.5rem; align-items:flex-start;">
+                    <div style="flex:1;">
+                        <label style="display:block; font-weight:600; margin-bottom:0.4rem;">Lansia</label>
+                        <select id="manual-lansia-select" name="lansia_id" required style="width:100%; padding:0.5rem; border:1px solid #ddd; border-radius:8px;">
+                            @foreach(($lansia ?? []) as $l)
+                                <option value="{{ $l->id }}">{{ $l->nama_lansia }} ({{ $l->id_lansia }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-top:0.6rem;">
+                    <label style="display:block; font-weight:600; margin-bottom:0.4rem;">Pesan Darurat</label>
+                    <textarea id="manual-pesan-textarea" name="pesan" rows="3" required placeholder="Tuliskan pesan darurat..." style="width:100%; padding:0.6rem; border:1px solid #ddd; border-radius:8px;"></textarea>
+                </div>
+                <button type="submit" class="btn-kirim-notifikasi" style="margin-top:0.6rem;">Kirim Notifikasi Darurat</button>
+            </form>
+        </div>
         @if(session('success'))
             <div style="background-color: #D1FAE5; color: #065F46; padding: 0.75rem; margin: 1rem; border-radius: 8px; font-size: 0.9rem;">
                 {{ session('success') }}
@@ -209,14 +229,10 @@
                         <span class="alert-lansia">{{ $kondisi->lansia->nama_lansia }}</span>
                         <span class="alert-date">{{ $kondisi->diukur_pada->format('d/m/Y H:i') }}</span>
                     </div>
-                    <form action="{{ route('pengasuh.kirim-notifikasi-darurat') }}" method="POST" style="margin-top: 1rem;">
-                        @csrf
-                        <input type="hidden" name="kondisi_id" value="{{ $kondisi->id }}">
-                        <input type="hidden" name="lansia_id" value="{{ $kondisi->lansia_id }}">
-                        <button type="submit" class="btn-kirim-notifikasi" onclick="return confirm('Kirim notifikasi darurat ke tenaga medis dan keluarga?')">
-                            🚨 KIRIM NOTIFIKASI DARURAT
-                        </button>
-                    </form>
+                    <button type="button" class="btn-kirim-notifikasi" style="margin-top: 1rem;"
+                        onclick="prefillEmergency('{{ $kondisi->lansia_id }}','{{ $kondisi->diukur_pada->format('Y-m-d H:i') }}','{{ $kondisi->sistol }}','{{ $kondisi->diastol }}','{{ $kondisi->nadi }}','{{ $kondisi->suhu }}','{{ $kondisi->gula_darah }}','{{ $kondisi->catatan }}','{{ $kondisi->lansia->nama_lansia }}')">
+                        🚨 PILIH & ISI PESAN DARURAT
+                    </button>
                     <div class="alert-body">
                         @if($kondisi->sistol && ($kondisi->sistol > 180 || $kondisi->sistol < 90))
                             <div class="alert-value">
@@ -279,6 +295,30 @@
             <span style="font-size: 0.75rem;">Profile</span>
         </a>
     </div>
+    <script>
+        function prefillEmergency(lansiaId, diukur, sistol, diastol, nadi, suhu, gula, catatan, nama) {
+            var select = document.getElementById('manual-lansia-select');
+            var textarea = document.getElementById('manual-pesan-textarea');
+            if (select) {
+                select.value = String(lansiaId);
+            }
+            var parts = [];
+            parts.push('Darurat untuk ' + nama + ' pada ' + diukur + '.');
+            if (sistol && diastol) parts.push('Tekanan darah ' + sistol + '/' + diastol + ' mmHg');
+            if (nadi) parts.push('Nadi ' + nadi + ' bpm');
+            if (suhu) parts.push('Suhu ' + suhu + '°C');
+            if (gula) parts.push('Gula darah ' + gula + ' mg/dL');
+            if (catatan) parts.push('Catatan: ' + catatan);
+            var msg = parts.join(' | ');
+            if (textarea) {
+                textarea.value = msg;
+            }
+            var form = document.getElementById('manual-form');
+            if (form && form.scrollIntoView) {
+                form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    </script>
 </body>
 </html>
 

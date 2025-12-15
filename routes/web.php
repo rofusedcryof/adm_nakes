@@ -18,13 +18,13 @@ use App\Http\Controllers\KeluargaPortalController;
 // ============================================================
 Route::get('/', function () {
     if (auth()->check()) {
-        $role = auth()->user()->role;
+        $role = auth()->user()->role ?? null;
         return match ($role) {
             'admin' => redirect()->route('admin.dashboard'),
             'tenaga_medis', 'nakes' => redirect()->route('medis.dashboard'),
             'pengasuh' => redirect()->route('pengasuh.dashboard'),
-            'keluarga', 'keluarga' => redirect()->route('keluarga.dashboard'),
-            
+            'keluarga' => redirect()->route('keluarga.dashboard'),
+            default => redirect()->route('keluarga.dashboard'),
         };
     }
     return redirect()->route('login');
@@ -51,14 +51,11 @@ Route::prefix('api/push')
         Route::post('/subscribe', [PushNotificationController::class, 'subscribe'])->name('push.subscribe');
         Route::post('/unsubscribe', [PushNotificationController::class, 'unsubscribe'])->name('push.unsubscribe');
         Route::post('/trigger', [PushNotificationController::class, 'trigger'])->name('push.trigger');
+        Route::post('/send', [PushNotificationController::class, 'send'])->name('push.send');
+        Route::post('/trigger-user/{userId}', [PushNotificationController::class, 'triggerUser'])->name('push.trigger_user');
     });
 
-// ============================================================
-// 🔹 Dashboard umum (untuk user biasa)
-// ============================================================
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware('auth')->name('dashboard');
+// (Dashboard umum dihapus – gunakan '/' untuk redirect sesuai peran)
 
 // ============================================================
 // 🔹 ADMIN ROUTES
@@ -69,7 +66,7 @@ Route::prefix('admin')
     ->group(function () {
         Route::get('/', function () {
             if (auth()->user()->role !== 'admin') {
-                return redirect()->route('dashboard');
+                return redirect('/');
             }
             return view('admin.dashboard');
         })->name('dashboard');
@@ -93,6 +90,7 @@ Route::prefix('medis')
     ->group(function () {
         Route::get('/', [MedisDashboardController::class, 'dashboard'])->name('dashboard');
         Route::get('/riwayat', [MedisRiwayatController::class, 'index'])->name('riwayat');
+        Route::get('/notifikasi', [MedisDashboardController::class, 'notifikasi'])->name('notifikasi');
 
         Route::resource('/instruksi', MedisInstruksiObatController::class)->except(['show']);
     });
@@ -131,6 +129,7 @@ Route::prefix('pengasuh')
         Route::get('/kondisi-darurat', [PengasuhDashboardController::class, 'kondisiDarurat'])->name('kondisi-darurat');
 
         Route::post('/kirim-notifikasi-darurat', [PengasuhDashboardController::class, 'kirimNotifikasiDarurat'])->name('kirim-notifikasi-darurat');
+        Route::post('/kondisi-darurat/kirim-manual', [PengasuhDashboardController::class, 'kirimNotifikasiDaruratManual'])->name('kirim-notifikasi-darurat-manual');
 
         Route::post('/kirim-notifikasi-darurat-langsung', [PengasuhDashboardController::class, 'kirimNotifikasiDaruratLangsung'])->name('kirim-notifikasi-darurat-langsung');
 

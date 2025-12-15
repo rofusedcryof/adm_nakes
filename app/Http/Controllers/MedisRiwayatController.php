@@ -12,7 +12,7 @@ class MedisRiwayatController extends Controller
     {
         $role = auth()->user()->role ?? null;
         if ($role !== 'tenaga_medis' && $role !== 'nakes') {
-            return redirect()->route('dashboard');
+            return redirect('/');
         }
 
         $lansia = Lansia::select('id', 'nama_lansia', 'id_lansia')->orderBy('nama_lansia')->get();

@@ -57,4 +57,23 @@ class Lansia extends Model
     {
         return $this->hasMany(RiwayatKondisiLansia::class);
     }
+
+    public static function generateId(string $jk): string
+    {
+        $prefix = $jk === 'P' ? 'P-' : 'L-';
+        $datePart = now()->format('Ymd');
+        $base = $prefix . $datePart;
+        $last = static::where('id_lansia', 'LIKE', $base . '%')
+            ->orderByDesc('id_lansia')
+            ->value('id_lansia');
+        $seq = 1;
+        if ($last) {
+            $parts = explode('-', $last);
+            $tail = end($parts);
+            if (ctype_digit($tail)) {
+                $seq = ((int) $tail) + 1;
+            }
+        }
+        return $base . '-' . str_pad((string) $seq, 4, '0', STR_PAD_LEFT);
+    }
 }
