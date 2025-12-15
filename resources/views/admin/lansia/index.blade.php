@@ -162,8 +162,12 @@
                         <td>{{ $l->alamat }}</td>
                         <td>
                             @php $kel = $l->keluarga->first(); @endphp
-                            {{ $kel?->nama }} ({{ $kel?->email }})
-                        </td>
+                            @if($kel)
+                                {{ $kel->nama }} ({{ $kel->email }})
+                            @else
+                                -
+                            @endif
+                            </td>
                     </tr>
                     @empty
                     <tr>
