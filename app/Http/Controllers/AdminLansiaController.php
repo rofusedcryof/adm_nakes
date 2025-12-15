@@ -48,7 +48,6 @@ class AdminLansiaController extends Controller
             'lansia' => 'required|array|min:1',
 
             // 🔴 SEMUA FIELD LANSIA WAJIB
-            'lansia.*.id_lansia'     => 'required|string|max:50|distinct|unique:lansia,id_lansia',
             'lansia.*.nama_lansia'   => 'required|string|max:255',
             'lansia.*.umur'          => 'required|date',
             'lansia.*.jenis_kelamin' => 'required|in:L,P',
@@ -77,9 +76,7 @@ class AdminLansiaController extends Controller
         $messages = [
             'lansia.required' => 'Minimal harus ada 1 data lansia',
 
-            'lansia.*.id_lansia.required' => 'ID lansia harus diisi',
-            'lansia.*.id_lansia.unique'   => 'ID lansia sudah terdaftar',
-            'lansia.*.id_lansia.distinct' => 'ID lansia tidak boleh sama',
+            
 
             'lansia.*.nama_lansia.required' => 'Nama lansia harus diisi',
 
@@ -139,11 +136,10 @@ class AdminLansiaController extends Controller
 
             foreach ($lansiaList as $data) {
                 $createdLansias[] = Lansia::create([
-                    'id_lansia'     => $data['id_lansia'],
+                    'id_lansia'     => Lansia::generateId($data['jenis_kelamin']),
                     'nama_lansia'   => $data['nama_lansia'],
                     'umur'          => $data['umur'],
                     'jenis_kelamin' => $data['jenis_kelamin'],
-                    // 🔴 WAJIB ADA (TIDAK BOLEH ?? '')
                     'alamat'        => $data['alamat'],
                 ]);
             }

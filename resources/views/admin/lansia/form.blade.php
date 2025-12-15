@@ -124,7 +124,7 @@ textarea{min-height:75px;resize:none;}
 
 @php
 $oldLansias = old('lansia', [
-    ['id_lansia'=>'','nama_lansia'=>'','umur'=>'','jenis_kelamin'=>'','alamat'=>'']
+    ['nama_lansia'=>'','umur'=>'','jenis_kelamin'=>'','alamat'=>'']
 ]);
 @endphp
 
@@ -143,14 +143,7 @@ $oldLansias = old('lansia', [
     </h3>
 
     <div class="grid">
-        <div>
-            <label>ID Lansia</label>
-            <input name="lansia[{{ $i }}][id_lansia]"
-                   value="{{ old("lansia.$i.id_lansia") }}" required>
-            @error("lansia.$i.id_lansia")
-                <div class="error">{{ $message }}</div>
-            @enderror
-        </div>
+        
 
         <div>
             <label>Nama</label>
@@ -244,7 +237,7 @@ function tambahLansia(){
         </h3>
 
         <div class="grid">
-            <div><label>ID Lansia</label><input name="lansia[${i}][id_lansia]" required></div>
+            
             <div><label>Nama</label><input name="lansia[${i}][nama_lansia]" required></div>
             <div><label>Tanggal Lahir</label><input type="date" name="lansia[${i}][umur]" required></div>
             <div>
